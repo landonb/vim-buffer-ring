@@ -67,6 +67,13 @@ function s:BufSurfAppend(bufnr)
         return
     endif
 
+    " Ignore unlisted buffers, such as the project drawer window from
+    " project.vim, https://www.vim.org/scripts/script.php?script_id=69.
+    " - If not, a BufSurf in one window can jump to the project window.
+    if !buflisted(a:bufnr)
+        return
+    endif
+
     " In case no navigation history exists for the current window, initialize
     " the navigation history.
     if !exists('w:history_index')
