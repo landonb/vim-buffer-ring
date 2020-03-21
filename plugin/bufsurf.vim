@@ -86,7 +86,10 @@ function s:BufSurfAppend(bufnr)
         " history.
         let s:i = a:bufnr + 1
         while bufexists(s:i)
-            call add(w:history, s:i)
+            " Ignore unlisted buffers, e.g., the project.vim tray buffer.
+            if buflisted(s:i)
+              call add(w:history, s:i)
+            endif
             let s:i += 1
         endwhile
 
