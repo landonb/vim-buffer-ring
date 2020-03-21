@@ -88,7 +88,13 @@ function s:BufSurfAppend(bufnr)
         while bufexists(s:i)
             " Ignore unlisted buffers, e.g., the project.vim tray buffer.
             if buflisted(s:i)
-              call add(w:history, s:i)
+              " (lb): I made an assumption to add this BufSurfIsDisabled()
+              " check here, as well, because it's called at the beginning
+              " of this function, so smells like it should be called here,
+              " too -- or instead commented why it should not be called.
+              if !s:BufSurfIsDisabled(s:i)
+                call add(w:history, s:i)
+              endif
             endif
             let s:i += 1
         endwhile
