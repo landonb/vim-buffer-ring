@@ -175,10 +175,29 @@ function s:BufSurfEcho(msg)
     endif
 endfunction
 
+function! s:BufSurfPopMatching(bufnr)
+  " Removes buffer indicated *iff* it's the currently indexed history element.
+  " - I.e., the BufEnter hook adds the netrw buffer, and here we remove it.
+  " - Note that FileType (and Syntax) is triggered twice on an `:Explore ...`
+  "   command, hence the check that the bufnr passed is the current element.
+  if !exists("w:history")
+    \ || len(w:history) <= 0
+    \ || a:bufnr != w:history[w:history_index]
+    return
+  endif
+
+  call remove(w:history, w:history_index)
+  let w:history_index -= 1
+endfunction
+
 " Setup the autocommands that handle MRU buffer ordering per window.
 augroup BufSurf
   autocmd!
   autocmd BufEnter * :call s:BufSurfAppend(winbufnr(winnr()))
   autocmd WinEnter * :call s:BufSurfAppend(winbufnr(winnr()))
   autocmd BufWipeout * :call s:BufSurfDelete(winbufnr(winnr()))
+  " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
+  " has not yet unlisted it, etc.), but eventually its FileType (and Syntax)
+  " is set to 'netrw'.
+  autocmd FileType netrw :call s:BufSurfPopMatching(winbufnr(winnr()))
 augroup End
