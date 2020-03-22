@@ -16,7 +16,7 @@ function s:InitVariable(var, value)
 endfunction
 
 " YOU: You can `let g:BufSurfIgnore = [<pattern>, ...]` to exclude buffers
-" whose name matches any <pattern>.
+" whose name matches any <pattern>. The plugin always excludes unlisted buffers.
 call s:InitVariable('g:BufSurfIgnore', '')
 
 " YOU: You can `let g:BufSurfMessages = 0` to disable status bar messages.
@@ -72,7 +72,12 @@ function s:BufSurfIsDisabled(bufnr)
     return 0
 endfunction
 
-function s:BufSurfable(bufnr)
+function s:BufSurfTargetable(bufnr)
+    " If the user bwipes a buffer, it won't exist, but its reference may.
+    if !bufexists(a:bufnr)
+      return 0
+    endif
+
     " Ignore unlisted buffers, such as the project drawer window from
     " project.vim, https://www.vim.org/scripts/script.php?script_id=69.
     " - If not, a BufSurf in one window can jump to the project window.
@@ -138,6 +143,24 @@ function s:BufSurfClear()
     let w:history = []
 endfunction
 
+function s:BufSurfInitHistory(bufnr)
+    " Reset w:history and w:history_index.
+    call s:BufSurfClear()
+    " Build a new history from known buffers, and set index accordingly.
+    let l:index = 0
+    let l:bufnrs = filter(range(1, bufnr('$')), 'buflisted(v:val)')
+    for l:curnr in l:bufnrs
+        if s:BufSurfTargetable(l:curnr)
+            " echom "BufSurfInitHistory: curnr: " . l:curnr . " / type: " . type(l:curnr)
+            call add(w:history, l:curnr)
+            if l:curnr == a:bufnr
+                let w:history_index = l:index
+            endif
+            let l:index += 1
+        endif
+    endfor
+endfunction
+
 function BufSurfEnsureIndexed(bufnr)
     if w:history_index >= 0 && w:history_index < len(w:history)
         return
@@ -154,28 +177,19 @@ endfunction
 " Add the given buffer number to the navigation history for the window
 " identified by winnr.
 function s:BufSurfAppend(bufnr)
-    if !BufSurfable(a:bufnr) | return | endif
+    if !BufSurfTargetable(a:bufnr) | return | endif
 
     " In case no navigation history exists for the current window, initialize
     " the navigation history.
     if !exists('w:history_index')
-        " Make sure that the current buffer will be inserted at the start of
-        " the window navigation list.
-        let w:history_index = 0
-        let w:history = []
-
-        " Add all buffers loaded for the current window to the navigation
-        " history.
-        let s:i = a:bufnr + 1
-        while bufexists(s:i)
-            " Ignore unlisted buffers, e.g., the project.vim tray buffer.
-            " Also ignore buffers indicated by BufSurfIsDisabled().
-            if BufSurfable(s:i)
-                call add(w:history, s:i)
-            endif
-            let s:i += 1
-        endwhile
-
+        " Initialize the navigation history for new windows.
+        call s:BufSurfInitHistory(l:bufnr)
+        if w:history_index != -1
+            " The buffer was located in the history and the index assigned.
+            return
+        endif
+        " Insert at end of list.
+        let w:history_index = len(w:history)
     " In case the newly added buffer is the same as the previously active
     " buffer, ignore it.
     elseif w:history_index != -1 && w:history[w:history_index] == a:bufnr
