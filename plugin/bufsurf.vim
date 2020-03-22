@@ -28,6 +28,23 @@ let s:ignore_buffers = split(g:BufSurfIgnore, ',')
 " Indicates whether the plugin is enabled or not.
 let s:disabled = 0
 
+function s:BufSurfable(bufnr)
+    " Ignore unlisted buffers, such as the project drawer window from
+    " project.vim, https://www.vim.org/scripts/script.php?script_id=69.
+    " - If not, a BufSurf in one window can jump to the project window.
+    if !buflisted(a:bufnr)
+        return 0
+    endif
+
+    " In case the specified buffer should be ignored, do not append it to the
+    " navigation history of the window.
+    if s:BufSurfIsDisabled(a:bufnr)
+        return 0
+    endif
+
+    return 1
+endfunction
+
 " Clear the navigation history
 function s:BufSurfClear()
     let w:history_index = -1
@@ -61,18 +78,7 @@ endfunction
 " Add the given buffer number to the navigation history for the window
 " identified by winnr.
 function s:BufSurfAppend(bufnr)
-    " In case the specified buffer should be ignored, do not append it to the
-    " navigation history of the window.
-    if s:BufSurfIsDisabled(a:bufnr)
-        return
-    endif
-
-    " Ignore unlisted buffers, such as the project drawer window from
-    " project.vim, https://www.vim.org/scripts/script.php?script_id=69.
-    " - If not, a BufSurf in one window can jump to the project window.
-    if !buflisted(a:bufnr)
-        return
-    endif
+    if !BufSurfable(a:bufnr) | return | endif
 
     " In case no navigation history exists for the current window, initialize
     " the navigation history.
@@ -87,14 +93,9 @@ function s:BufSurfAppend(bufnr)
         let s:i = a:bufnr + 1
         while bufexists(s:i)
             " Ignore unlisted buffers, e.g., the project.vim tray buffer.
-            if buflisted(s:i)
-              " (lb): I made an assumption to add this BufSurfIsDisabled()
-              " check here, as well, because it's called at the beginning
-              " of this function, so smells like it should be called here,
-              " too -- or instead commented why it should not be called.
-              if !s:BufSurfIsDisabled(s:i)
+            " Also ignore buffers indicated by BufSurfIsDisabled().
+            if BufSurfable(s:i)
                 call add(w:history, s:i)
-              endif
             endif
             let s:i += 1
         endwhile
