@@ -1,7 +1,8 @@
 " bufsurf.vim
 "
 " MIT license applies, see LICENSE for licensing details.
-if exists('g:loaded_bufsurf')
+
+if exists('g:loaded_bufsurf_circumnavigator') || &cp || v:version < 800
     finish
 endif
 
@@ -22,8 +23,8 @@ call s:InitVariable('g:BufSurfIgnore', '')
 " YOU: You can `let g:BufSurfMessages = 0` to disable status bar messages.
 call s:InitVariable('g:BufSurfMessages', 1)
 
-command BufSurfBack :call <SID>BufSurfBack()
-command BufSurfForward :call <SID>BufSurfForward()
+command BufSurfBack :call <SID>BufSurfBack(-1)
+command BufSurfForward :call <SID>BufSurfForward(-1)
 command BufSurfClear :call <SID>BufSurfClear()
 command BufSurfList :call <SID>BufSurfList()
 
@@ -52,6 +53,20 @@ function s:BufSurfEcho(msg)
         endfor
         echohl None
     endif
+endfunction
+
+function s:BufSurfDisabled()
+    let l:bufnr = bufnr("%")
+    if !buflisted(l:bufnr)
+        call s:BufSurfEcho("BufSurf: Navigation disabled for this buffer")
+        return 1
+    endif
+    if len(w:history) == 0
+        " (lb): Seems unlikely. But just in case.
+        call s:BufSurfEcho("BufSurf: Window has no history!")
+        return 1
+    endif
+    return 0
 endfunction
 
 " ***
@@ -111,27 +126,103 @@ endfunction
 
 " ***
 
-" Open the previous buffer from the window's navigation history.
-function s:BufSurfBack()
-    if w:history_index > 0
-        let w:history_index -= 1
+function BufSurfEdit()
+    if w:history_index < 0 | return | endif
+    let l:success = 0
+    let l:bufnr = w:history[w:history_index]
+    if s:BufSurfTargetable(l:bufnr)
         let s:disabled = 1
-        execute "b " . w:history[w:history_index]
+        execute "b " . l:bufnr
         let s:disabled = 0
+        let l:success = 1
     else
-        call s:BufSurfEcho("reached start of window navigation history")
+        call s:BufSurfPopMatching(l:bufnr)
+    endif
+    return l:success
+endfunction
+
+function s:BufNavigateEchoWrapped()
+    " Sorta like how Vim's `wrapscan` prints when it wraps around:
+    "   "search hit BOTTOM, continuing at TOP",
+    " we show a message when we wrap around the buffer queue.
+    " - Note that Vim is still in the process of changing buffers, and
+    "   the buffer path will be displayed almost immediately after this
+    "   callback is processed. So rather than draw the error message now,
+    "   because the next message (the buffer path) will just overwrite it
+    "   immediately, set a timer to do it.
+    " - Note that the message will not appear in Inert mode because Vim
+    "   constantly shows `-- INSERT --` in that mode... and I'm not sure
+    "   a way around... though probably is one. -- Ya know, I've got INSERT
+    "   in Mescaline, I don't need to both places.
+    "     ANSWER: set noshowmode
+    let timer = timer_start(1, 'BufSurfEchoWrappedAround')
+endfunction
+
+function BufSurfEchoWrappedAround(timer)
+    call s:BufSurfEcho('Wrapped around history!')
+endfunction
+
+" Open the previous buffer from the window's navigation history.
+" SYNC_ME: s:BufSurfBack and s:BufSurfForward are similar, but opposite.
+function s:BufSurfBack(limit)
+    if s:BufSurfDisabled() | return | endif
+
+    " l:limit is -1 first time through; if we reach start of buffer
+    " without finding editable, this function recursed with l:limit
+    " set to w:history_index.
+
+    let l:cur_index = w:history_index
+    while w:history_index > (a:limit + 1)
+        let w:history_index -= 1
+        if BufSurfEdit()
+            if a:limit != -1
+                call s:BufNavigateEchoWrapped()
+            endif
+            return
+        endif
+    endwhile
+
+    if w:history_index == 0
+        " Got to first element without finding editable buffer. If this function
+        " did not start at final element, keep looking from back of list.
+        if a:limit == -1 && l:cur_index != (len(w:history) - 1)
+            let w:history_index = len(w:history)
+            call s:BufSurfBack(l:cur_index)
+        endif
     endif
 endfunction
 
 " Open the next buffer in the navigation history for the current window.
-function s:BufSurfForward()
-    if w:history_index < len(w:history) - 1
+" SYNC_ME: s:BufSurfBack and s:BufSurfForward are similar, but opposite.
+function s:BufSurfForward(limit)
+    if s:BufSurfDisabled() | return | endif
+
+    " l:limit is -1 first time through; if we reach end of buffer
+    " without finding editable, this function recursed with l:limit
+    " set to w:history_index.
+    let l:limit = a:limit
+    if l:limit == -1
+        let l:limit = len(w:history)
+    endif
+
+    let l:cur_index = w:history_index
+    while w:history_index < (l:limit - 1)
         let w:history_index += 1
-        let s:disabled = 1
-        execute "b " . w:history[w:history_index]
-        let s:disabled = 0
-    else
-        call s:BufSurfEcho("reached end of window navigation history")
+        if BufSurfEdit()
+            if l:limit != len(w:history)
+                call s:BufNavigateEchoWrapped()
+            endif
+            return
+        endif
+    endwhile
+
+    if w:history_index == len(w:history) - 1
+        " Got to final element without finding editable buffer. If this function
+        " did not start at first element, keep looking from front of list.
+        if a:limit == -1 && l:cur_index != 0
+            let w:history_index = -1
+            call s:BufSurfForward(l:cur_index)
+        endif
     endif
 endfunction
 
