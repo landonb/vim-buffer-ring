@@ -1,12 +1,20 @@
-" bufsurf.vim
-"
-" MIT license applies, see LICENSE for licensing details.
+" Traverse buffers backwards and forwards in the order they were most recently viewed.
+" Author[1]: Landon Bouma <https://tallybark.com/>
+" Online[1]: https://github.com/landonb/vim-bufsurf-circumnavigator
+" Author[0]: Ton van den Heuvel <https://github.com/ton/>
+" Online[0]: https://github.com/ton/vim-bufsurf
+" License: MIT. View the 'LICENSE' file for details.
+" vim:tw=0:ts=4:sw=4:et:norl:ft=vim
+
+" YOU: Uncomment the 'unlet', then <F9> to reload this file.
+"       https://github.com/landonb/vim-source-reloader
+"  silent! unlet g:loaded_bufsurf_circumnavigator
 
 if exists('g:loaded_bufsurf_circumnavigator') || &cp || v:version < 800
     finish
 endif
 
-let g:loaded_bufsurf = 1
+let g:loaded_bufsurf_circumnavigator = 1
 
 " ***
 
