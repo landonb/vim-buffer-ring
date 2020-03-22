@@ -314,16 +314,27 @@ endfunction
 " Displays buffer navigation history for the current window.
 function! s:BufferRingList()
     let l:buffer_names = []
-    for l:bufnr in w:history
+    " Same as:
+    "   let l:curnr = bufnr("%")
+    let l:curnr = w:history[w:history_index]
+    for l:bufnr in reverse(copy(w:history))
         let l:buffer_name = bufname(l:bufnr)
-        if bufnr("%") == l:bufnr
+        if l:buffer_name == ""
+            let l:buffer_name = "[No Name #" . l:bufnr . "]"
+        endif
+        if l:bufnr == l:curnr
             let l:buffer_name = "* " . l:buffer_name
+        elseif (w:history_index > 0) && l:bufnr == w:history[w:history_index - 1]
+            let l:buffer_name = "↓ " . l:buffer_name
+        elseif (w:history_index < (len(w:history) - 1)) && l:bufnr == w:history[w:history_index + 1]
+            let l:buffer_name = "↑ " . l:buffer_name
         else
             let l:buffer_name = "  " . l:buffer_name
         endif
         let l:buffer_names = l:buffer_names + [l:buffer_name]
     endfor
-    call s:BufSurfEcho("window buffer navigation history (* = current):" . join(l:buffer_names, "\n"))
+    call s:BufSurfEcho("window buffer navigation history (* = current, ↑ = next, ↓ = prev):\n"
+        \ . join(l:buffer_names, "\n"))
 endfunction
 
 " ***
