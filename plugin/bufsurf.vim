@@ -138,6 +138,19 @@ function s:BufSurfClear()
     let w:history = []
 endfunction
 
+function BufSurfEnsureIndexed(bufnr)
+    if w:history_index >= 0 && w:history_index < len(w:history)
+        return
+    endif
+    let w:history_index = -1
+    if len(w:history) > 0
+        let w:history_index = 0
+        if a:bufnr != -1
+            echom "ERROR: Did not determine w:history_index for buffer: " . a:bufnr
+        endif
+    endif
+endfunction
+
 " Add the given buffer number to the navigation history for the window
 " identified by winnr.
 function s:BufSurfAppend(bufnr)
@@ -206,17 +219,20 @@ endfunction
 " ***
 
 " Remove indicated buffer from the current window's navigation history.
-function s:BufSurfDelete(bufnr)
-    if s:BufSurfIsDisabled(a:bufnr)
-        return
-    endif
+function s:BufSurfDelete(bufnr, ensure)
+    if len(w:history) == 0 | return | endif
 
-    " Remove the buffer from all window histories.
+    let l:lshift = count(w:history[0:w:history_index], a:bufnr)
+
+    " We do not have to worry about l:bufnr == l:curnr because, if so,
+    " Vim will close the window, and it and its w:history_index disappear.
+
+    " Remove the buffer from the current window's history.
     call filter(w:history, 'v:val !=' . a:bufnr)
 
-    " In case the current window history index is no longer valid, move it within boundaries.
-    if w:history_index >= len(w:history)
-        let w:history_index = len(w:history) - 1
+    let w:history_index -= l:lshift
+    if a:ensure
+        call BufSurfEnsureIndexed(a:bufnr)
     endif
 endfunction
 
@@ -227,7 +243,7 @@ augroup BufSurf
     autocmd!
     autocmd BufEnter * :call s:BufSurfAppend(winbufnr(winnr()))
     autocmd WinEnter * :call s:BufSurfAppend(winbufnr(winnr()))
-    autocmd BufWipeout * :call s:BufSurfDelete(eval(expand('<abuf>')))
+    autocmd BufWipeout * :call s:BufSurfDelete(eval(expand('<abuf>')), 1)
     " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
     " has not yet unlisted it, etc.), but eventually its FileType (and Syntax)
     " is set to 'netrw'.
