@@ -1,6 +1,6 @@
 " Traverse buffers backwards and forwards in the order they were most recently viewed.
 " Author[1]: Landon Bouma <https://tallybark.com/>
-" Online[1]: https://github.com/landonb/vim-bufsurf-circumnavigator
+" Online[1]: https://github.com/landonb/vim-buffer-ring
 " Author[0]: Ton van den Heuvel <https://github.com/ton/>
 " Online[0]: https://github.com/ton/vim-bufsurf
 " License: MIT. View the 'LICENSE' file for details.
@@ -8,13 +8,13 @@
 
 " YOU: Uncomment the 'unlet', then <F9> to reload this file.
 "       https://github.com/landonb/vim-source-reloader
-"  silent! unlet g:loaded_bufsurf_circumnavigator
+"  silent! unlet g:loaded_buffer_ring
 
-if exists('g:loaded_bufsurf_circumnavigator') || &cp || v:version < 800
+if exists('g:loaded_buffer_ring') || &cp || v:version < 800
     finish
 endif
 
-let g:loaded_bufsurf_circumnavigator = 1
+let g:loaded_buffer_ring = 1
 
 " ***
 
@@ -24,20 +24,20 @@ function s:InitVariable(var, value)
     exec 'let ' . a:var . ' = ' . "'" . a:value . "'"
 endfunction
 
-" YOU: You can `let g:BufSurfIgnore = [<pattern>, ...]` to exclude buffers
+" YOU: You can `let g:BufferRingIgnore = [<pattern>, ...]` to exclude buffers
 " whose name matches any <pattern>. The plugin always excludes unlisted buffers.
-call s:InitVariable('g:BufSurfIgnore', '')
+call s:InitVariable('g:BufferRingIgnore', '')
 
-" YOU: You can `let g:BufSurfMessages = 0` to disable status bar messages.
-call s:InitVariable('g:BufSurfMessages', 1)
+" YOU: You can `let g:BufferRingMessages = 0` to disable status bar messages.
+call s:InitVariable('g:BufferRingMessages', 1)
 
-command BufSurfBack :call <SID>BufSurfBack(-1)
-command BufSurfForward :call <SID>BufSurfForward(-1)
-command BufSurfClear :call <SID>BufSurfClear()
-command BufSurfList :call <SID>BufSurfList()
+command BufferRingReverse :call <SID>BufferRingReverse(-1)
+command BufferRingForward :call <SID>BufferRingForward(-1)
+command BufferRingClear :call <SID>BufferRingClear()
+command BufferRingList :call <SID>BufferRingList()
 
 " List of buffer names that we should not track.
-let s:ignore_buffers = split(g:BufSurfIgnore, ',')
+let s:ignore_buffers = split(g:BufferRingIgnore, ',')
 
 " Indicates whether the plugin is enabled or not.
 let s:disabled = 0
@@ -52,7 +52,7 @@ let s:disabled = 0
 "       https://github.com/landonb/dubs_mescaline
 "     you might already have the mode indicated elsewhere.
 function s:BufSurfEcho(msg)
-    if g:BufSurfMessages == 1
+    if g:BufferRingMessages == 1
         echohl WarningMsg
         let lines = split(a:msg, '\n')
         echomsg 'BufSurf: ' . lines[0]
@@ -171,8 +171,8 @@ function BufSurfEchoWrappedAround(timer)
 endfunction
 
 " Open the previous buffer from the window's navigation history.
-" SYNC_ME: s:BufSurfBack and s:BufSurfForward are similar, but opposite.
-function s:BufSurfBack(limit)
+" SYNC_ME: s:BufferRingReverse and s:BufferRingForward are similar, but opposite.
+function s:BufferRingReverse(limit)
     if s:BufSurfDisabled() | return | endif
 
     " l:limit is -1 first time through; if we reach start of buffer
@@ -195,14 +195,14 @@ function s:BufSurfBack(limit)
         " did not start at final element, keep looking from back of list.
         if a:limit == -1 && l:cur_index != (len(w:history) - 1)
             let w:history_index = len(w:history)
-            call s:BufSurfBack(l:cur_index)
+            call s:BufferRingReverse(l:cur_index)
         endif
     endif
 endfunction
 
 " Open the next buffer in the navigation history for the current window.
-" SYNC_ME: s:BufSurfBack and s:BufSurfForward are similar, but opposite.
-function s:BufSurfForward(limit)
+" SYNC_ME: s:BufferRingReverse and s:BufferRingForward are similar, but opposite.
+function s:BufferRingForward(limit)
     if s:BufSurfDisabled() | return | endif
 
     " l:limit is -1 first time through; if we reach end of buffer
@@ -229,7 +229,7 @@ function s:BufSurfForward(limit)
         " did not start at first element, keep looking from front of list.
         if a:limit == -1 && l:cur_index != 0
             let w:history_index = -1
-            call s:BufSurfForward(l:cur_index)
+            call s:BufferRingForward(l:cur_index)
         endif
     endif
 endfunction
@@ -237,14 +237,14 @@ endfunction
 " ***
 
 " Clear the navigation history
-function s:BufSurfClear()
+function s:BufferRingClear()
     let w:history_index = -1
     let w:history = []
 endfunction
 
 function s:BufSurfInitHistory(bufnr)
     " Reset w:history and w:history_index.
-    call s:BufSurfClear()
+    call s:BufferRingClear()
     " Build a new history from known buffers, and set index accordingly.
     let l:index = 0
     let l:bufnrs = filter(range(1, bufnr('$')), 'buflisted(v:val)')
@@ -295,8 +295,8 @@ function s:BufSurfInsertCurrent()
         " little annoying, especially if I used my <F2> mapping, which jumps
         " back and forth between the two MRU buffers -- this would add the 2
         " buffers to the history back to back, so that to get to any file that
-        " I had been editing prior, I'd have to BufSurfBack back through all
-        " the <F2>-created redundant buffers... so just keep 1 copy of each!
+        " I had been editing prior, I'd have to BufferRingReverse back through
+        " all the <F2>-created redundant buffers... so just keep 1 copy of each!
         " - tl;dr.
         call s:BufSurfDelete(l:bufnr, 0)
         let w:history_index += 1
@@ -312,7 +312,7 @@ endfunction
 " ***
 
 " Displays buffer navigation history for the current window.
-function s:BufSurfList()
+function s:BufferRingList()
     let l:buffer_names = []
     for l:bufnr in w:history
         let l:buffer_name = bufname(l:bufnr)
