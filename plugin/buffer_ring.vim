@@ -274,9 +274,14 @@ function! BufSurfEnsureIndexed(bufnr)
 endfunction
 
 " Insert given buffer number to the navigation history for the current window.
-function! s:BufSurfInsertCurrent()
+function! s:BufSurfInsertCurrent(bufnr, othnr)
     " (lb): Note that either bufnr("%") or winbufnr(winnr()) should work here.
     let l:bufnr = bufnr("%")
+
+    if a:bufnr != l:bufnr || a:bufnr != a:othnr
+" LATER/2020-03-22: (lb): Can remove this later... or just do not commit.
+        echom "ERROR: BufSurfInsertCurrent: a:bufnr=" . a:bufnr . " / l:bufnr=" . l:bufnr . " / a:othnr=" . a:othnr
+    endif
 
     " Ignore special buffers, like Vim help, netrw buffer, project.vim tray, etc.
     if !s:BufSurfTargetable(l:bufnr) | return | endif
@@ -367,8 +372,8 @@ augroup BufSurf
     " (lb): I traced both BufEnter and WinEnter to see if I could tell why
     " both are necessary, but it was not obvious. (Intuition says just BufEnter
     " should be enough; but does not hurt to hook both events, either.)
-    autocmd BufEnter * :call s:BufSurfInsertCurrent()
-    autocmd WinEnter * :call s:BufSurfInsertCurrent()
+    autocmd BufEnter * :call s:BufSurfInsertCurrent(winbufnr(winnr()), expand('<abuf>'))
+    autocmd WinEnter * :call s:BufSurfInsertCurrent(winbufnr(winnr()), expand('<abuf>'))
     autocmd BufWipeout * :call s:BufSurfDelete(eval(expand('<abuf>')), 1)
     " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
     " has not yet unlisted it, etc.), but eventually its FileType (and Syntax)
