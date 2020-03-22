@@ -15,7 +15,11 @@ function s:InitVariable(var, value)
     exec 'let ' . a:var . ' = ' . "'" . a:value . "'"
 endfunction
 
+" YOU: You can `let g:BufSurfIgnore = [<pattern>, ...]` to exclude buffers
+" whose name matches any <pattern>.
 call s:InitVariable('g:BufSurfIgnore', '')
+
+" YOU: You can `let g:BufSurfMessages = 0` to disable status bar messages.
 call s:InitVariable('g:BufSurfMessages', 1)
 
 command BufSurfBack :call <SID>BufSurfBack()
@@ -32,6 +36,12 @@ let s:disabled = 0
 " ***
 
 " Echo a BufSurf message in the Vim status line.
+" - Note: In Insert mode, you can `set noshowmode` to hide the
+"   "-- INSERT --" message, which will otherwise obscure any
+"   other message printed while the user is in insert mode.
+"   - If you use a powerline-esque plugin, such as the spirited
+"       https://github.com/landonb/dubs_mescaline
+"     you might already have the mode indicated elsewhere.
 function s:BufSurfEcho(msg)
     if g:BufSurfMessages == 1
         echohl WarningMsg
@@ -96,7 +106,7 @@ endfunction
 
 " ***
 
-" Open the previous buffer in the navigation history for the current window.
+" Open the previous buffer from the window's navigation history.
 function s:BufSurfBack()
     if w:history_index > 0
         let w:history_index -= 1
@@ -195,7 +205,7 @@ endfunction
 
 " ***
 
-" Remove buffer with number bufnr from all navigation histories.
+" Remove indicated buffer from the current window's navigation history.
 function s:BufSurfDelete(bufnr)
     if s:BufSurfIsDisabled(a:bufnr)
         return
