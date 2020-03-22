@@ -174,13 +174,14 @@ function BufSurfEnsureIndexed(bufnr)
     endif
 endfunction
 
-" Add the given buffer number to the navigation history for the window
-" identified by winnr.
-function s:BufSurfAppend(bufnr)
-    if !BufSurfTargetable(a:bufnr) | return | endif
+" Insert given buffer number to the navigation history for the current window.
+function s:BufSurfInsertCurrent()
+    " (lb): Note that either bufnr("%") or winbufnr(winnr()) should work here.
+    let l:bufnr = bufnr("%")
 
-    " In case no navigation history exists for the current window, initialize
-    " the navigation history.
+    " Ignore special buffers, like Vim help, netrw buffer, project.vim tray, etc.
+    if !s:BufSurfTargetable(l:bufnr) | return | endif
+
     if !exists('w:history_index')
         " Initialize the navigation history for new windows.
         call s:BufSurfInitHistory(l:bufnr)
@@ -188,29 +189,25 @@ function s:BufSurfAppend(bufnr)
             " The buffer was located in the history and the index assigned.
             return
         endif
-        " Insert at end of list.
-        let w:history_index = len(w:history)
-    " In case the newly added buffer is the same as the previously active
-    " buffer, ignore it.
-    elseif w:history_index != -1 && w:history[w:history_index] == a:bufnr
-        return
-
-    " Add the current buffer to the buffer navigation history list of the
-    " current window.
     else
+        " Remove all entries for this buffer and insert again at current index.
+        " (lb): Orig. vim-bufsurf behavior would add the same buffer multiple
+        " times, just not adjacent in the history. But I always found this a
+        " little annoying, especially if I used my <F2> mapping, which jumps
+        " back and forth between the two MRU buffers -- this would add the 2
+        " buffers to the history back to back, so that to get to any file that
+        " I had been editing prior, I'd have to BufSurfBack back through all
+        " the <F2>-created redundant buffers... so just keep 1 copy of each!
+        " - tl;dr.
+        call s:BufSurfDelete(l:bufnr, 0)
         let w:history_index += 1
     endif
 
-    " In case the buffer that is being appended is already the next buffer in
-    " the history, ignore it. This happens in case a buffer is loaded that is
-    " also the next buffer in the forward browsing history. Thus, this
-    " prevents duplicate entries of the same buffer occurring next to each
-    " other in the browsing history.
-    let l:is_buffer_listed = (w:history_index != len(w:history) && w:history[w:history_index] == a:bufnr)
+    let w:history = insert(w:history, l:bufnr, w:history_index)
 
-    if !l:is_buffer_listed
-        let w:history = insert(w:history, a:bufnr, w:history_index)
-    endif
+    " Ensure that w:history_index is not still -1 from BufSurfInitHistory.
+    call BufSurfEnsureIndexed(l:bufnr)
+
 endfunction
 
 " ***
@@ -255,8 +252,11 @@ endfunction
 " Setup the autocommands that handle MRU buffer ordering per window.
 augroup BufSurf
     autocmd!
-    autocmd BufEnter * :call s:BufSurfAppend(winbufnr(winnr()))
-    autocmd WinEnter * :call s:BufSurfAppend(winbufnr(winnr()))
+    " (lb): I traced both BufEnter and WinEnter to see if I could tell why
+    " both are necessary, but it was not obvious. (Intuition says just BufEnter
+    " should be enough; but does not hurt to hook both events, either.)
+    autocmd BufEnter * :call s:BufSurfInsertCurrent()
+    autocmd WinEnter * :call s:BufSurfInsertCurrent()
     autocmd BufWipeout * :call s:BufSurfDelete(eval(expand('<abuf>')), 1)
     " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
     " has not yet unlisted it, etc.), but eventually its FileType (and Syntax)
