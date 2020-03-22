@@ -56,8 +56,8 @@ function! s:BufSurfEcho(msg)
         echohl WarningMsg
         let lines = split(a:msg, '\n')
         echomsg 'BufSurf: ' . lines[0]
-        for l in lines[1:]
-            echomsg l
+        for l:line in lines[1:]
+            echomsg l:line
         endfor
         echohl None
     endif
@@ -86,8 +86,8 @@ function! s:BufSurfIsDisabled(bufnr)
         return 1
     endif
 
-    for bufpattern in s:ignore_buffers
-        if match(bufname(a:bufnr), bufpattern) != -1
+    for l:bufpattern in s:ignore_buffers
+        if match(bufname(a:bufnr), l:bufpattern) != -1
             return 1
         endif
     endfor
