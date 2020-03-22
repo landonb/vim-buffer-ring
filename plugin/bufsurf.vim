@@ -7,11 +7,12 @@ endif
 
 let g:loaded_bufsurf = 1
 
+" ***
+
 " Initialises var to value in case the variable does not yet exist.
 function s:InitVariable(var, value)
-    if !exists(a:var)
-        exec 'let ' . a:var . ' = ' . "'" . a:value . "'"
-    endif
+    if exists(a:var) | return | endif
+    exec 'let ' . a:var . ' = ' . "'" . a:value . "'"
 endfunction
 
 call s:InitVariable('g:BufSurfIgnore', '')
@@ -28,6 +29,8 @@ let s:ignore_buffers = split(g:BufSurfIgnore, ',')
 " Indicates whether the plugin is enabled or not.
 let s:disabled = 0
 
+" ***
+
 " Echo a BufSurf message in the Vim status line.
 function s:BufSurfEcho(msg)
     if g:BufSurfMessages == 1
@@ -35,11 +38,13 @@ function s:BufSurfEcho(msg)
         let lines = split(a:msg, '\n')
         echomsg 'BufSurf: ' . lines[0]
         for l in lines[1:]
-          echomsg l
+            echomsg l
         endfor
         echohl None
     endif
 endfunction
+
+" ***
 
 " Returns whether recording the buffer navigation history is disabled for the
 " given buffer number *bufnr*.
@@ -75,19 +80,21 @@ function s:BufSurfable(bufnr)
 endfunction
 
 function! s:BufSurfPopMatching(bufnr)
-  " Removes buffer indicated *iff* it's the currently indexed history element.
-  " - I.e., the BufEnter hook adds the netrw buffer, and here we remove it.
-  " - Note that FileType (and Syntax) is triggered twice on an `:Explore ...`
-  "   command, hence the check that the bufnr passed is the current element.
-  if !exists("w:history")
-    \ || len(w:history) <= 0
-    \ || a:bufnr != w:history[w:history_index]
-    return
-  endif
+    " Removes buffer indicated *iff* it's the currently indexed history element.
+    " - I.e., the BufEnter hook adds the netrw buffer, and here we remove it.
+    " - Note that FileType (and Syntax) is triggered twice on an `:Explore ...`
+    "   command, hence the check that the bufnr passed is the current element.
+    if !exists("w:history")
+       \ || len(w:history) <= 0
+       \ || a:bufnr != w:history[w:history_index]
+        return
+    endif
 
-  call remove(w:history, w:history_index)
-  let w:history_index -= 1
+    call remove(w:history, w:history_index)
+    let w:history_index -= 1
 endfunction
+
+" ***
 
 " Open the previous buffer in the navigation history for the current window.
 function s:BufSurfBack()
@@ -112,6 +119,8 @@ function s:BufSurfForward()
         call s:BufSurfEcho("reached end of window navigation history")
     endif
 endfunction
+
+" ***
 
 " Clear the navigation history
 function s:BufSurfClear()
@@ -167,6 +176,8 @@ function s:BufSurfAppend(bufnr)
     endif
 endfunction
 
+" ***
+
 " Displays buffer navigation history for the current window.
 function s:BufSurfList()
     let l:buffer_names = []
@@ -181,6 +192,8 @@ function s:BufSurfList()
     endfor
     call s:BufSurfEcho("window buffer navigation history (* = current):" . join(l:buffer_names, "\n"))
 endfunction
+
+" ***
 
 " Remove buffer with number bufnr from all navigation histories.
 function s:BufSurfDelete(bufnr)
@@ -197,14 +210,17 @@ function s:BufSurfDelete(bufnr)
     endif
 endfunction
 
+" ***
+
 " Setup the autocommands that handle MRU buffer ordering per window.
 augroup BufSurf
-  autocmd!
-  autocmd BufEnter * :call s:BufSurfAppend(winbufnr(winnr()))
-  autocmd WinEnter * :call s:BufSurfAppend(winbufnr(winnr()))
-  autocmd BufWipeout * :call s:BufSurfDelete(eval(expand('<abuf>')))
-  " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
-  " has not yet unlisted it, etc.), but eventually its FileType (and Syntax)
-  " is set to 'netrw'.
-  autocmd FileType netrw :call s:BufSurfPopMatching(winbufnr(winnr()))
+    autocmd!
+    autocmd BufEnter * :call s:BufSurfAppend(winbufnr(winnr()))
+    autocmd WinEnter * :call s:BufSurfAppend(winbufnr(winnr()))
+    autocmd BufWipeout * :call s:BufSurfDelete(eval(expand('<abuf>')))
+    " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
+    " has not yet unlisted it, etc.), but eventually its FileType (and Syntax)
+    " is set to 'netrw'.
+    autocmd FileType netrw :call s:BufSurfPopMatching(winbufnr(winnr()))
 augroup End
+
