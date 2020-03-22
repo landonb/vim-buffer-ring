@@ -202,7 +202,7 @@ augroup BufSurf
   autocmd!
   autocmd BufEnter * :call s:BufSurfAppend(winbufnr(winnr()))
   autocmd WinEnter * :call s:BufSurfAppend(winbufnr(winnr()))
-  autocmd BufWipeout * :call s:BufSurfDelete(winbufnr(winnr()))
+  autocmd BufWipeout * :call s:BufSurfDelete(eval(expand('<abuf>')))
   " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
   " has not yet unlisted it, etc.), but eventually its FileType (and Syntax)
   " is set to 'netrw'.
