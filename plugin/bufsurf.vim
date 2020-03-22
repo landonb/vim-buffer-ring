@@ -19,14 +19,43 @@ call s:InitVariable('g:BufSurfMessages', 1)
 
 command BufSurfBack :call <SID>BufSurfBack()
 command BufSurfForward :call <SID>BufSurfForward()
-command BufSurfList :call <SID>BufSurfList()
 command BufSurfClear :call <SID>BufSurfClear()
+command BufSurfList :call <SID>BufSurfList()
 
 " List of buffer names that we should not track.
 let s:ignore_buffers = split(g:BufSurfIgnore, ',')
 
 " Indicates whether the plugin is enabled or not.
 let s:disabled = 0
+
+" Echo a BufSurf message in the Vim status line.
+function s:BufSurfEcho(msg)
+    if g:BufSurfMessages == 1
+        echohl WarningMsg
+        let lines = split(a:msg, '\n')
+        echomsg 'BufSurf: ' . lines[0]
+        for l in lines[1:]
+          echomsg l
+        endfor
+        echohl None
+    endif
+endfunction
+
+" Returns whether recording the buffer navigation history is disabled for the
+" given buffer number *bufnr*.
+function s:BufSurfIsDisabled(bufnr)
+    if s:disabled
+        return 1
+    endif
+
+    for bufpattern in s:ignore_buffers
+        if match(bufname(a:bufnr), bufpattern) != -1
+            return 1
+        endif
+    endfor
+
+    return 0
+endfunction
 
 function s:BufSurfable(bufnr)
     " Ignore unlisted buffers, such as the project drawer window from
@@ -45,10 +74,19 @@ function s:BufSurfable(bufnr)
     return 1
 endfunction
 
-" Clear the navigation history
-function s:BufSurfClear()
-    let w:history_index = -1
-    let w:history = []
+function! s:BufSurfPopMatching(bufnr)
+  " Removes buffer indicated *iff* it's the currently indexed history element.
+  " - I.e., the BufEnter hook adds the netrw buffer, and here we remove it.
+  " - Note that FileType (and Syntax) is triggered twice on an `:Explore ...`
+  "   command, hence the check that the bufnr passed is the current element.
+  if !exists("w:history")
+    \ || len(w:history) <= 0
+    \ || a:bufnr != w:history[w:history_index]
+    return
+  endif
+
+  call remove(w:history, w:history_index)
+  let w:history_index -= 1
 endfunction
 
 " Open the previous buffer in the navigation history for the current window.
@@ -73,6 +111,12 @@ function s:BufSurfForward()
     else
         call s:BufSurfEcho("reached end of window navigation history")
     endif
+endfunction
+
+" Clear the navigation history
+function s:BufSurfClear()
+    let w:history_index = -1
+    let w:history = []
 endfunction
 
 " Add the given buffer number to the navigation history for the window
@@ -138,22 +182,6 @@ function s:BufSurfList()
     call s:BufSurfEcho("window buffer navigation history (* = current):" . join(l:buffer_names, "\n"))
 endfunction
 
-" Returns whether recording the buffer navigation history is disabled for the
-" given buffer number *bufnr*.
-function s:BufSurfIsDisabled(bufnr)
-    if s:disabled
-        return 1
-    endif
-
-    for bufpattern in s:ignore_buffers
-        if match(bufname(a:bufnr), bufpattern) != -1
-            return 1
-        endif
-    endfor
-
-    return 0
-endfunction
-
 " Remove buffer with number bufnr from all navigation histories.
 function s:BufSurfDelete(bufnr)
     if s:BufSurfIsDisabled(a:bufnr)
@@ -167,34 +195,6 @@ function s:BufSurfDelete(bufnr)
     if w:history_index >= len(w:history)
         let w:history_index = len(w:history) - 1
     endif
-endfunction
-
-" Echo a BufSurf message in the Vim status line.
-function s:BufSurfEcho(msg)
-    if g:BufSurfMessages == 1
-        echohl WarningMsg
-        let lines = split(a:msg, '\n')
-        echomsg 'BufSurf: ' . lines[0]
-        for l in lines[1:]
-          echomsg l
-        endfor
-        echohl None
-    endif
-endfunction
-
-function! s:BufSurfPopMatching(bufnr)
-  " Removes buffer indicated *iff* it's the currently indexed history element.
-  " - I.e., the BufEnter hook adds the netrw buffer, and here we remove it.
-  " - Note that FileType (and Syntax) is triggered twice on an `:Explore ...`
-  "   command, hence the check that the bufnr passed is the current element.
-  if !exists("w:history")
-    \ || len(w:history) <= 0
-    \ || a:bufnr != w:history[w:history_index]
-    return
-  endif
-
-  call remove(w:history, w:history_index)
-  let w:history_index -= 1
 endfunction
 
 " Setup the autocommands that handle MRU buffer ordering per window.
