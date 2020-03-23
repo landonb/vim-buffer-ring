@@ -324,9 +324,11 @@ function! s:BufferRingList()
         endif
         if l:bufnr == l:curnr
             let l:buffer_name = "* " . l:buffer_name
-        elseif (w:history_index > 0) && l:bufnr == w:history[w:history_index - 1]
+        elseif ((w:history_index > 0) && l:bufnr == w:history[w:history_index - 1])
+                \ || ((w:history_index == 0) && l:bufnr == w:history[-1])
             let l:buffer_name = "↓ " . l:buffer_name
-        elseif (w:history_index < (len(w:history) - 1)) && l:bufnr == w:history[w:history_index + 1]
+        elseif ((w:history_index < (len(w:history) - 1)) && l:bufnr == w:history[w:history_index + 1])
+                \ || ((w:history_index == (len(w:history) - 1)) && l:bufnr == w:history[0])
             let l:buffer_name = "↑ " . l:buffer_name
         else
             let l:buffer_name = "  " . l:buffer_name
