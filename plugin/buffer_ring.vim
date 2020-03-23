@@ -65,7 +65,7 @@ endfunction
 
 function! s:BufSurfDisabled()
     let l:bufnr = bufnr("%")
-    if !buflisted(l:bufnr)
+    if !buflisted(l:bufnr) || &ft == 'qf'
         call s:BufSurfEcho("BufSurf: Navigation disabled for this buffer")
         return 1
     endif
