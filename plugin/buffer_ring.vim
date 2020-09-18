@@ -35,6 +35,7 @@ command BufferRingReverse :call <SID>BufferRingReverse(-1)
 command BufferRingForward :call <SID>BufferRingForward(-1)
 command BufferRingClear :call <SID>BufferRingClear()
 command BufferRingList :call <SID>BufferRingList()
+command BufferRingInsert :call <SID>BufSurfInsertCurrent()
 
 " List of buffer names that we should not track.
 let s:ignore_buffers = split(g:BufferRingIgnore, ',')
