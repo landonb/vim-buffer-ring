@@ -6,17 +6,20 @@
 " License: MIT. View the 'LICENSE' file for details.
 " vim:tw=0:ts=4:sw=4:et:norl:ft=vim
 
-" YOU: Uncomment the 'unlet', then <F9> to reload this file.
-"       https://github.com/landonb/vim-source-reloader
-"  silent! unlet g:loaded_buffer_ring
+" +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "
 
-if exists('g:loaded_buffer_ring') || &cp || v:version < 800
+" YOU: Uncomment next 'unlet', then <F9> to reload this file.
+"      (Iff: https://github.com/landonb/vim-source-reloader)
+"
+" silent! unlet g:loaded_plugin_buffer_ring
+
+if exists('g:loaded_plugin_buffer_ring') || &cp || v:version < 800
     finish
 endif
 
-let g:loaded_buffer_ring = 1
+let g:loaded_plugin_buffer_ring = 1
 
-" ***
+" +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "
 
 " Initialises var to value in case the variable does not yet exist.
 function! s:InitVariable(var, value)
