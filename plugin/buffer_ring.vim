@@ -251,7 +251,23 @@ function! s:BufSurfInitHistory(bufnr)
     call s:BufferRingClear()
     " Build a new history from known buffers, and set index accordingly.
     let l:index = 0
-    let l:bufnrs = filter(range(1, bufnr('$')), 'buflisted(v:val)')
+
+    " WATCH/2021-02-04 20:34: Every so often, Vim won't quit (at least the
+    " Vim I've got configured, with 10s of plugins, if not 100). It looks
+    " like filter() and one other item are causing error messages, but I'm
+    " not sure which filter(). And the issue has been difficult to suss. So
+    " using trace messages while I figure this out. Here's the original call:
+    "
+    "   let l:bufnrs = filter(range(1, bufnr('$')), 'buflisted(v:val)')
+    "
+    " And here's the same call, but with a warning message:
+    let l:brange = range(1, bufnr('$'))
+    if len(l:brange) == 0
+        " LATER/2021-02-06: This path is temporary, to help author diagnose issue.
+        echom "WARNING: No l:brange!!!"
+    endif
+    let l:bufnrs = filter(l:brange, 'buflisted(v:val)')
+
     for l:curnr in l:bufnrs
         if s:BufSurfTargetable(l:curnr)
             " echom "BufSurfInitHistory: curnr: " . l:curnr . " / type: " . type(l:curnr)
@@ -353,6 +369,19 @@ function! s:BufSurfDelete(bufnr, ensure)
 
     " We do not have to worry about l:bufnr == l:curnr because, if so,
     " Vim will close the window, and it and its w:history_index disappear.
+
+    " WATCH/2021-02-04 20:34: Every so often, Vim won't quit, and it prints
+    " an error about filter() and one other thing. But not sure which filter.
+    " - But I'd guess this one, which happens on delete, because the issue
+    "   happens when I'm using <Alt-f e> to close all files/buffers, before
+    "   I'd use <Aft-f x> to exit Vim.
+    " - See longer comment above (also at 2021-02-04 20:34).
+    if len(w:history) == 0
+        " LATER/2021-02-06: This path is temporary, to help author diagnose issue.
+        echom "WARNING: No w:history!!!"
+    " else
+    "     echom 'w:history (' . len(w:history) . '): ' . join(w:history, ' :: ')
+    endif
 
     " Remove the buffer from the current window's history.
     call filter(w:history, 'v:val !=' . a:bufnr)
