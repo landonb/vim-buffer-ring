@@ -110,6 +110,11 @@ function! s:BufSurfTargetable(bufnr)
     " Ignore unlisted buffers, such as the project drawer window from
     " project.vim, https://www.vim.org/scripts/script.php?script_id=69.
     " - If not, a BufSurf in one window can jump to the project window.
+    " - !buflisted also filters 'quickfix' and 'help' window, but not all
+    "   the buftypes (like 'nofile'). We could ignore all such windows by:
+    "     if getbufvar(a:bufnr, "&buftype") != "" | return 0 | endif
+    "   but I don't work with 'nofile' enough to know if that's desirable
+    "   or not. So commenting (hi!) instead!
     if !buflisted(a:bufnr)
         return 0
     endif
