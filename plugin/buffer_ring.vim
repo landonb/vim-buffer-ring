@@ -365,7 +365,7 @@ endfunction
 
 " Remove indicated buffer from the current window's navigation history.
 function! s:BufSurfDelete(bufnr, ensure)
-    if len(w:history) == 0 | return | endif
+    if !exists('w:history') || len(w:history) == 0 | return | endif
 
     let l:lshift = count(w:history[0:w:history_index], a:bufnr)
 
