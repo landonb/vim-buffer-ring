@@ -69,15 +69,17 @@ endfunction
 
 function! s:BufSurfDisabled()
     let l:bufnr = bufnr("%")
-    if !buflisted(l:bufnr) || &ft == 'qf'
+    if !buflisted(l:bufnr) || &ft == 'qf' || &previewwindow
         call s:BufSurfEcho("BufSurf: Navigation disabled for this buffer")
         return 1
     endif
+
     if len(w:history) == 0
         " (lb): Seems unlikely. But just in case.
         call s:BufSurfEcho("BufSurf: Window has no history!")
         return 1
     endif
+
     return 0
 endfunction
 
