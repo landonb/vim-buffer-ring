@@ -110,15 +110,18 @@ function! s:BufSurfTargetable(bufnr)
 
     " Ignore unlisted buffers, such as the project drawer window from
     " project.vim, https://www.vim.org/scripts/script.php?script_id=69.
-    " - If not, a BufSurf in one window can jump to the project window.
-    " - !buflisted also filters 'quickfix' and 'help' window, but not all
-    "   the buftypes (like 'nofile'). We could ignore all such windows by:
-    "     if getbufvar(a:bufnr, "&buftype") != "" | return 0 | endif
-    "   but I don't work with 'nofile' enough to know if that's desirable
-    "   or not. So commenting (hi!) instead!
+    " - If not, a BufSurf in another window can jump to the project window.
+    " - The 'help' window is also !buflisted; but both quickfix and
+    "   project tray are buflisted.
     if !buflisted(a:bufnr)
         return 0
     endif
+
+    " We could also filter on buftype, which would sense 'quickfix' and
+    " 'help', and a few other types, like 'nofile'. E.g.,:
+    "     if getbufvar(a:bufnr, "&buftype") != "" | return 0 | endif
+    " but I don't work with 'nofile' enough to know if that's desirable
+    " or not. So commenting (hi!) instead!
 
     " In case the specified buffer should be ignored, do not append it to the
     " navigation history of the window.
@@ -288,6 +291,7 @@ function! s:BufSurfInitHistory(bufnr)
     endfor
 endfunction
 
+" QUESTION/2021-02-21: Scope caught my eye: Not meant to be an s:Function?
 function! BufSurfEnsureIndexed(bufnr)
     if w:history_index >= 0 && w:history_index < len(w:history)
         return
