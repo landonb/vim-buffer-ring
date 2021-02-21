@@ -69,14 +69,15 @@ endfunction
 
 function! s:BufSurfDisabled()
     let l:bufnr = bufnr("%")
+
     if !buflisted(l:bufnr) || &ft == 'qf' || &previewwindow
-        call s:BufSurfEcho("BufSurf: Navigation disabled for this buffer")
+        call s:BufSurfEcho("Navigation disabled for this buffer")
         return 1
     endif
 
     if len(w:history) == 0
         " (lb): Seems unlikely. But just in case.
-        call s:BufSurfEcho("BufSurf: Window has no history!")
+        call s:BufSurfEcho("Window has no history!")
         return 1
     endif
 
@@ -362,7 +363,7 @@ function! s:BufferRingList()
         endif
         let l:buffer_names = l:buffer_names + [l:buffer_name]
     endfor
-    call s:BufSurfEcho("window buffer navigation history (* = current, ↑ = next, ↓ = prev):\n"
+    call s:BufSurfEcho("Window buffer navigation history (* = current, ↑ = next, ↓ = prev):\n"
         \ . join(l:buffer_names, "\n"))
 endfunction
 
