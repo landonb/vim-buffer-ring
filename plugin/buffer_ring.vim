@@ -264,10 +264,10 @@ function! s:BufSurfInitHistory(bufnr)
     let l:index = 0
 
     " WATCH/2021-02-04 20:34: Every so often, Vim won't quit (at least the
-    " Vim I've got configured, with 10s of plugins, if not 100). It looks
-    " like filter() and one other item are causing error messages, but I'm
-    " not sure which filter(). And the issue has been difficult to suss. So
-    " using trace messages while I figure this out. Here's the original call:
+    " Vim I've got configured, with ~100 plugins). It looks like filter()
+    " and one other item are causing error messages, but I'm not sure
+    " which filter(). And the issue has been difficult to suss. So using
+    " trace messages while I figure this out. Here's the original call:
     "
     "   let l:bufnrs = filter(range(1, bufnr('$')), 'buflisted(v:val)')
     "
