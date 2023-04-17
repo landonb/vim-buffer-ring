@@ -338,7 +338,6 @@ function! s:BufSurfInsertCurrent()
 
     " Ensure that w:history_index is not still -1 from BufSurfInitHistory.
     call BufSurfEnsureIndexed(l:bufnr)
-
 endfunction
 
 " ***
