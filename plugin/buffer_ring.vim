@@ -59,7 +59,7 @@ function! s:BufSurfEcho(msg)
     if g:BufferRingMessages == 1
         echohl WarningMsg
         let lines = split(a:msg, '\n')
-        echomsg 'BufSurf: ' . lines[0]
+        echomsg 'buffer_ring.vim: ' . lines[0]
         for l:line in lines[1:]
             echomsg l:line
         endfor
@@ -389,7 +389,7 @@ function! s:BufSurfDelete(bufnr, ensure)
     " - See longer comment above (also at 2021-02-04 20:34).
     if len(w:history) == 0
         " LATER/2021-02-06: This path is temporary, to help author diagnose issue.
-        echom "WARNING: No w:history!!!"
+        echom "buffer_ring.vim: GAFFE: No w:history!"
     " else
     "     echom 'w:history (' . len(w:history) . '): ' . join(w:history, ' :: ')
     endif
