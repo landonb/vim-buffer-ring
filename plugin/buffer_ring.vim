@@ -389,6 +389,9 @@ function! s:BufSurfDelete(bufnr, ensure)
     " - See longer comment above (also at 2021-02-04 20:34).
     if len(w:history) == 0
         " LATER/2021-02-06: This path is temporary, to help author diagnose issue.
+        " TRACK/2024-11-21: I haven't seen this warning *in ages*, or perhaps
+        " just not in MacVim (I haven't been running Vim on Linux much since
+        " eary 2024).
         echom "buffer_ring.vim: GAFFE: No w:history!"
     " else
     "     echom 'w:history (' . len(w:history) . '): ' . join(w:history, ' :: ')
