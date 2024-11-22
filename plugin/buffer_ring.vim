@@ -291,8 +291,7 @@ function! s:BufSurfInitHistory(bufnr)
     endfor
 endfunction
 
-" QUESTION/2021-02-21: Scope caught my eye: Not meant to be an s:Function?
-function! BufSurfEnsureIndexed(bufnr)
+function! s:BufSurfEnsureIndexed(bufnr)
     if w:history_index >= 0 && w:history_index < len(w:history)
         return
     endif
@@ -337,7 +336,7 @@ function! s:BufSurfInsertCurrent()
     let w:history = insert(w:history, l:bufnr, w:history_index)
 
     " Ensure that w:history_index is not still -1 from BufSurfInitHistory.
-    call BufSurfEnsureIndexed(l:bufnr)
+    call s:BufSurfEnsureIndexed(l:bufnr)
 endfunction
 
 " ***
@@ -402,7 +401,7 @@ function! s:BufSurfDelete(bufnr, ensure)
 
     let w:history_index -= l:lshift
     if a:ensure
-        call BufSurfEnsureIndexed(a:bufnr)
+        call s:BufSurfEnsureIndexed(a:bufnr)
     endif
 endfunction
 
