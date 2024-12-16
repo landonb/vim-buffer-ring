@@ -119,7 +119,7 @@ function! s:BufSurfTargetable(bufnr)
 
     " We could also filter on buftype, which would sense 'quickfix' and
     " 'help', and a few other types, like 'nofile'. E.g.,:
-    "     if getbufvar(a:bufnr, "&buftype") != "" | return 0 | endif
+    "     if getbufvar(a:bufnr, '&buftype') != '' | return 0 | endif
     " but I don't work with 'nofile' enough to know if that's desirable
     " or not. So commenting (hi!) instead!
 
