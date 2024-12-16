@@ -1,6 +1,6 @@
 " Traverse buffers backwards and forwards in the order they were most recently viewed.
 " Author[1]: Landon Bouma <https://tallybark.com/>
-" Online[1]: https://github.com/landonb/vim-buffer-ring
+" Online[1]: https://github.com/landonb/vim-buffer-ring#💍
 " Author[0]: Ton van den Heuvel <https://github.com/ton/>
 " Online[0]: https://github.com/ton/vim-bufsurf
 " License: MIT. View the 'LICENSE' file for details.
