@@ -108,11 +108,17 @@ function! s:BufSurfTargetable(bufnr)
       return 0
     endif
 
-    " Ignore unlisted buffers, such as the project drawer window from
-    " project.vim, https://www.vim.org/scripts/script.php?script_id=69.
-    " - If not, a BufSurf in another window can jump to the project window.
-    " - The 'help' window is also !buflisted; but both quickfix and
-    "   project tray are buflisted.
+    " Ignore unlisted buffers, e.g.:
+    " - A :help window.
+    " - The project drawer window from project.vim:
+    "     https://www.vim.org/scripts/script.php?script_id=69
+    "   and maintained by this plug's same author at:
+    "     https://github.com/landonb/dubs_project_tray#🗂
+    "   - Though note project tray buffer is initially buflisted,
+    "     until the first BufEnter callback (see s:DoSetup()).
+    " - If we didn't ignore these, a BufSurf operation in a 'regular'
+    "   could, e.g., jump to the project window.
+    " - Note that quickfix *is* buflisted; see &ft check in BufSurfDisabled.
     if !buflisted(a:bufnr)
         return 0
     endif
