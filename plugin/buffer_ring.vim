@@ -8,13 +8,16 @@
 
 " +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "
 
-" YOU: Uncomment next 'unlet', then <F9> to reload this file.
-"      (Iff: https://github.com/landonb/vim-source-reloader)
-"
-" silent! unlet g:loaded_plugin_buffer_ring
+" GUARD: Press <F9> to reload this plugin (or :source it).
+" - Via: https://github.com/embrace-vim/vim-source-reloader#↩️
+
+if expand('%:p') ==# expand('<sfile>:p')
+  unlet g:loaded_plugin_buffer_ring
+endif
 
 if exists('g:loaded_plugin_buffer_ring') || &cp || v:version < 800
-    finish
+
+  finish
 endif
 
 let g:loaded_plugin_buffer_ring = 1
