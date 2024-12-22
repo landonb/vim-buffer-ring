@@ -148,7 +148,7 @@ function! s:BufSurfPopMatching(bufnr)
     "   command, hence the check that the bufnr passed is the current element.
     if !exists("w:history")
        \ || len(w:history) <= 0
-       \ || a:bufnr != w:history[w:history_index]
+       \ || a:bufnr != s:HistoryLookup(w:history_index)
         return
     endif
 
@@ -161,8 +161,18 @@ endfunction
 function! BufSurfEdit()
     if w:history_index < 0 | return | endif
     let l:success = 0
-    let l:bufnr = w:history[w:history_index]
-    if s:BufSurfTargetable(l:bufnr)
+    let l:bufnr = s:HistoryLookup(w:history_index)
+    if l:bufnr == -1
+        let l:hist_len = len(w:history)
+        echom "GAFFE: BufSurf index " .. w:history_index .. " > history len " .. l:hist_len
+        " DUNNO/2024-12-22: Should we reset the lookup?
+        "   call s:BufferRingClear()
+        " Or just reset the index?
+        "   let w:history_index = -1
+        " Or would that leave user unable to buf-surf anywhere?
+        " - We'll play it safe and set to the end of known history.
+        let w:history_index = l:hist_len - 1
+    elseif s:BufSurfTargetable(l:bufnr)
         let s:disabled = 1
         execute "b " . l:bufnr
         let s:disabled = 0
@@ -255,6 +265,23 @@ function! s:BufferRingForward(limit)
             let w:history_index = -1
             call s:BufferRingForward(l:cur_index)
         endif
+    endif
+endfunction
+
+" ***
+
+" DUNNO/2024-12-22: Sometimes when I close all buffers but some don't close
+" because unsaved changes, when I try to next/prev to them (<C-k>/<C-j>),
+" BufSurfEdit throws 'E684: List index out of range: {n}'. Though not sure
+" why. So hardened.
+function! s:HistoryLookup(history_index)
+    let l:hist_len = len(w:history)
+    if a:history_index < l:hist_len
+        " Return the bufnr at this index.
+        return w:history[a:history_index]
+    else
+        " Caller will have to deal with it.
+        return -1
     endif
 endfunction
 
@@ -355,7 +382,7 @@ function! s:BufferRingList()
     let l:buffer_names = []
     " Same as:
     "   let l:curnr = bufnr("%")
-    let l:curnr = w:history[w:history_index]
+    let l:curnr = s:HistoryLookup(w:history_index)
     for l:bufnr in reverse(copy(w:history))
         let l:buffer_name = bufname(l:bufnr)
         if l:buffer_name == ""
@@ -363,11 +390,11 @@ function! s:BufferRingList()
         endif
         if l:bufnr == l:curnr
             let l:buffer_name = "* " . l:buffer_name
-        elseif ((w:history_index > 0) && l:bufnr == w:history[w:history_index - 1])
-                \ || ((w:history_index == 0) && l:bufnr == w:history[-1])
+        elseif ((w:history_index > 0) && l:bufnr == s:HistoryLookup(w:history_index - 1))
+                \ || ((w:history_index == 0) && l:bufnr == s:HistoryLookup(-1))
             let l:buffer_name = "↓ " . l:buffer_name
-        elseif ((w:history_index < (len(w:history) - 1)) && l:bufnr == w:history[w:history_index + 1])
-                \ || ((w:history_index == (len(w:history) - 1)) && l:bufnr == w:history[0])
+        elseif ((w:history_index < (len(w:history) - 1)) && l:bufnr == s:HistoryLookup(w:history_index + 1))
+                \ || ((w:history_index == (len(w:history) - 1)) && l:bufnr == s:HistoryLookup(0))
             let l:buffer_name = "↑ " . l:buffer_name
         else
             let l:buffer_name = "  " . l:buffer_name
