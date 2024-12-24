@@ -12,7 +12,7 @@
 " - Via: https://github.com/embrace-vim/vim-source-reloader#↩️
 
 if expand('%:p') ==# expand('<sfile>:p')
-  unlet g:loaded_plugin_buffer_ring
+  unlet! g:loaded_plugin_buffer_ring
 endif
 
 if exists('g:loaded_plugin_buffer_ring') || &cp || v:version < 800
