@@ -6,7 +6,7 @@
 " License: MIT. View the 'LICENSE' file for details.
 " vim:tw=0:ts=4:sw=4:et:norl:ft=vim
 
-" +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "
+" -------------------------------------------------------------------
 
 " GUARD: Press <F9> to reload this plugin (or :source it).
 " - Via: https://github.com/embrace-vim/vim-source-reloader#↩️
@@ -22,7 +22,7 @@ endif
 
 let g:loaded_plugin_buffer_ring = 1
 
-" +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ "
+" -------------------------------------------------------------------
 
 " Initialises var to value in case the variable does not yet exist.
 function! s:InitVariable(var, value)
