@@ -49,10 +49,12 @@ function! g:embrace#bufsurf#BufferRingReverse(limit)
     let l:cur_index = w:history_index
     while w:history_index > (a:limit + 1)
         let w:history_index -= 1
+
         if g:embrace#buffer_ring#BufSurfEdit()
             if a:limit != -1
                 call g:embrace#buffer_ring#BufNavigateEchoWrapped()
             endif
+
             return
         endif
     endwhile
@@ -62,6 +64,7 @@ function! g:embrace#bufsurf#BufferRingReverse(limit)
         " did not start at final element, keep looking from back of list.
         if a:limit == -1 && l:cur_index != (len(w:history) - 1)
             let w:history_index = len(w:history)
+
             call g:embrace#bufsurf#BufferRingReverse(l:cur_index)
         endif
     endif
@@ -97,6 +100,7 @@ function! g:embrace#bufsurf#BufferRingForward(limit) abort
         " did not start at first element, keep looking from front of list.
         if a:limit == -1 && l:cur_index != 0
             let w:history_index = -1
+
             call g:embrace#bufsurf#BufferRingForward(l:cur_index)
         endif
     endif
@@ -295,9 +299,12 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
         for tab_info in gettabinfo()
             for win_idx in tab_info.windows
                 let history = gettabwinvar(tab_info.tabnr, win_idx, 'history')
+
                 if type(history) != v:t_list
+
                     continue
                 endif
+
                 let history_index = gettabwinvar(tab_info.tabnr, win_idx, 'history_index')
 
                 call filter(history, 'v:val != ' . a:bufnr)
@@ -305,11 +312,13 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
                 " - [lb]: This is from bufsurf.vim but vim-buffer-ring doesn't allow duplicates.
                 "
                 "  call uniq(history)
+
                 call settabwinvar(tab_info.tabnr, win_idx, 'history', history)
 
                 " In case the current window history index is no longer valid, move it within boundaries.
                 if history_index >= len(history)
                     let history_index = len(history) - 1
+
                     call settabwinvar(tab_info.tabnr, win_idx, 'history_index', history_index)
                 endif
             endfor

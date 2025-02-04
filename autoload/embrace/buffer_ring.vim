@@ -77,6 +77,7 @@ function! g:embrace#buffer_ring#BufSurfPopMatching(bufnr) abort
     if !exists("w:history")
        \ || len(w:history) <= 0
        \ || a:bufnr != g:embrace#buffer_ring#HistoryLookup(w:history_index)
+
         return
     endif
 
