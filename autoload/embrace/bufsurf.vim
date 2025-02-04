@@ -350,3 +350,22 @@ function! g:embrace#bufsurf#BufSurfEcho(msg) abort
     echohl None
 endfunction
 
+" -------------------------------------------------------------------
+
+" Setup the autocommands that handle MRU buffer ordering per window.
+function! g:embrace#bufsurf#CreateAutocommands() abort
+    augroup BufSurf
+        autocmd!
+        " (lb): I traced both BufEnter and WinEnter to see if I could tell why
+        " both are necessary, but it was not obvious. (Intuition says just BufEnter
+        " should be enough; but does not hurt to hook both events, either.)
+        autocmd BufEnter * :call g:embrace#bufsurf#BufSurfInsertCurrent()
+        autocmd WinEnter * :call g:embrace#bufsurf#BufSurfInsertCurrent()
+        autocmd BufWipeout * :call g:embrace#bufsurf#BufSurfDelete(str2nr(expand('<abuf>')), 1)
+        " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
+        " has not yet unlisted it, etc.), but eventually its FileType (and Syntax)
+        " is set to 'netrw'.
+        autocmd FileType netrw :call g:embrace#buffer_ring#BufSurfPopMatching(bufnr('%'))
+    augroup End
+endfunction
+
