@@ -149,7 +149,7 @@ function! g:embrace#bufsurf#BufferRingList() abort
     let l:buffer_names = []
     " Same as:
     "   let l:curnr = bufnr("%")
-    let l:curnr = s:HistoryLookup(w:history_index)
+    let l:curnr = g:embrace#buffer_ring#HistoryLookup(w:history_index)
     for l:bufnr in reverse(copy(w:history))
         let l:buffer_name = bufname(l:bufnr)
         if l:buffer_name == ""
@@ -157,11 +157,17 @@ function! g:embrace#bufsurf#BufferRingList() abort
         endif
         if l:bufnr == l:curnr
             let l:buffer_name = "* " . l:buffer_name
-        elseif ((w:history_index > 0) && l:bufnr == s:HistoryLookup(w:history_index - 1))
-                \ || ((w:history_index == 0) && l:bufnr == s:HistoryLookup(-1))
+        elseif (
+                \ (w:history_index > 0)
+                \ && l:bufnr == g:embrace#buffer_ring#HistoryLookup(w:history_index - 1))
+                \ || ((w:history_index == 0)
+                \       && l:bufnr == g:embrace#buffer_ring#HistoryLookup(-1))
             let l:buffer_name = "↓ " . l:buffer_name
-        elseif ((w:history_index < (len(w:history) - 1)) && l:bufnr == s:HistoryLookup(w:history_index + 1))
-                \ || ((w:history_index == (len(w:history) - 1)) && l:bufnr == s:HistoryLookup(0))
+        elseif (
+                \ (w:history_index < (len(w:history) - 1))
+                \ && l:bufnr == g:embrace#buffer_ring#HistoryLookup(w:history_index + 1))
+                \ || ((w:history_index == (len(w:history) - 1))
+                \       && l:bufnr == g:embrace#buffer_ring#HistoryLookup(0))
             let l:buffer_name = "↑ " . l:buffer_name
         else
             let l:buffer_name = "  " . l:buffer_name
