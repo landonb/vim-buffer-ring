@@ -107,7 +107,7 @@ function! BufSurfEdit() abort
     return l:success
 endfunction
 
-function! s:BufNavigateEchoWrapped() abort
+function! g:embrace#buffer_ring#BufNavigateEchoWrapped() abort
     " Sorta like how Vim's `wrapscan` prints when it wraps around:
     "   "search hit BOTTOM, continuing at TOP",
     " we show a message when we wrap around the buffer queue.

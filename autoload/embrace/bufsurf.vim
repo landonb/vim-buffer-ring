@@ -55,7 +55,7 @@ function! g:embrace#bufsurf#BufferRingReverse(limit)
         let w:history_index -= 1
         if BufSurfEdit()
             if a:limit != -1
-                call s:BufNavigateEchoWrapped()
+                call g:embrace#buffer_ring#BufNavigateEchoWrapped()
             endif
             return
         endif
@@ -89,7 +89,7 @@ function! g:embrace#bufsurf#BufferRingForward(limit) abort
         let w:history_index += 1
         if BufSurfEdit()
             if l:limit != len(w:history)
-                call s:BufNavigateEchoWrapped()
+                call g:embrace#buffer_ring#BufNavigateEchoWrapped()
             endif
             return
         endif
