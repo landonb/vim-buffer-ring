@@ -42,7 +42,7 @@ function! s:BufferRingClear() abort
 endfunction
 
 " Open the previous buffer from the window's navigation history.
-" SYNC_ME: #BufferRingReverse and s:BufferRingForward are similar, but opposite.
+" SYNC_ME: #BufferRingReverse and #BufferRingForward are similar, but opposite.
 function! g:embrace#bufsurf#BufferRingReverse(limit)
     if g:embrace#buffer_ring#BufSurfDisabled() | return | endif
 
@@ -72,8 +72,8 @@ function! g:embrace#bufsurf#BufferRingReverse(limit)
 endfunction
 
 " Open the next buffer in the navigation history for the current window.
-" SYNC_ME: #BufferRingReverse and s:BufferRingForward are similar, but opposite.
-function! s:BufferRingForward(limit) abort
+" SYNC_ME: #BufferRingReverse and #BufferRingForward are similar, but opposite.
+function! g:embrace#bufsurf#BufferRingForward(limit) abort
     if g:embrace#buffer_ring#BufSurfDisabled() | return | endif
 
     " l:limit is -1 first time through; if we reach end of buffer
@@ -100,7 +100,7 @@ function! s:BufferRingForward(limit) abort
         " did not start at first element, keep looking from front of list.
         if a:limit == -1 && l:cur_index != 0
             let w:history_index = -1
-            call s:BufferRingForward(l:cur_index)
+            call g:embrace#bufsurf#BufferRingForward(l:cur_index)
         endif
     endif
 endfunction
