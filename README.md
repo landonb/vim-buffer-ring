@@ -145,8 +145,8 @@ To load the plugin manually, install to
 
 ## License
 
-Copyright 2020 Landon Bouma. All rights reserved. \
-Copyright 2010-2012, 2017-2019 Ton van den Heuvel. All rights reserved.
+Copyright 2020-2025 Landon Bouma. All rights reserved. \
+Copyright 2010-2021 Ton van den Heuvel. All rights reserved.
 
 This work is licensed under the MIT License.
 View the [LICENSE](LICENSE) file for details.
