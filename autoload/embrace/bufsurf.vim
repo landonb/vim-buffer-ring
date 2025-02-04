@@ -328,6 +328,11 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
 
     call g:embrace#buffer_ring#BufSurfEnsureIndexed()
 
+    " Note that vim-buffer-ring will skip deleted buffers anyway, because
+    " the Reverse/Forward commands call BufSurfEdit, which checks
+    " BufSurfTargetable — which calls bufexists.
+    " - But cleaning up preemptively makes the output from the
+    "   BufferRingList and BufSurfListAll commands better.
     if a:wipeout
         " Go into each window of each tab and remove the buffer from each window's history.
         for tab_info in gettabinfo()
@@ -397,6 +402,7 @@ function! g:embrace#bufsurf#CreateAutocommands() abort
         autocmd BufEnter * :call g:embrace#bufsurf#BufSurfInsertCurrent()
         autocmd WinEnter * :call g:embrace#bufsurf#BufSurfInsertCurrent()
         autocmd BufWipeout * :call g:embrace#bufsurf#BufSurfDelete(str2nr(expand('<abuf>')), 1)
+        autocmd BufDelete * :call g:embrace#bufsurf#BufSurfDelete(str2nr(expand('<abuf>')), 1)
         " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
         " has not yet unlisted it, etc.), but eventually its FileType (and Syntax)
         " is set to 'netrw'.
