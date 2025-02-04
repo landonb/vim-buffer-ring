@@ -119,10 +119,10 @@ function! g:embrace#buffer_ring#BufNavigateEchoWrapped() abort
     "   a way around... though probably is one. -- Ya know, I've got INSERT
     "   in Mescaline, I don't need to both places.
     "     ANSWER: set noshowmode
-    let timer = timer_start(1, 'BufSurfEchoWrappedAround')
+    let timer = timer_start(1, { -> execute('call g:embrace#buffer_ring#BufSurfEchoWrappedAround()', '')})
 endfunction
 
-function! BufSurfEchoWrappedAround(timer) abort
+function! g:embrace#buffer_ring#BufSurfEchoWrappedAround() abort
     call g:embrace#bufsurf#BufSurfEcho('Wrapped around history!')
 endfunction
 
