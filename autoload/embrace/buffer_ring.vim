@@ -9,23 +9,56 @@
 " -------------------------------------------------------------------
 
 " CALSO: BufSurfDisabled, BufSurfIsDisabled — BufSurf\(Is\)\?Disabled
-function! g:embrace#buffer_ring#BufSurfDisabled() abort
-    let l:bufnr = bufnr("%")
+function! g:embrace#buffer_ring#BufSurfDisabled(bufnr = -1, inhibit_alert = 0) abort
+    let l:bufnr = a:bufnr
+    if l:bufnr == -1
+        let l:bufnr = bufnr("%")
+    endif
 
-    if !buflisted(l:bufnr) || &ft == 'qf' || &previewwindow
-        call g:embrace#bufsurf#BufSurfEcho("vim-buffer-ring: Navigation disabled for this buffer")
+    if !g:embrace#buffer_ring#IsNormalBuffer(l:bufnr)
+        if !a:inhibit_alert
+            call g:embrace#bufsurf#BufSurfEcho("vim-buffer-ring: Navigation disabled for this buffer")
+        endif
 
         return 1
     endif
 
-    if len(w:history) == 0
-        " (lb): Seems unlikely. But just in case.
-        call g:embrace#bufsurf#BufSurfEcho("GAFFE: vim-buffer-ring: Window has no history")
+    if !a:inhibit_alert
+        if exists('w:history') && len(w:history) == 0
+            " (lb): Seems unlikely. But just in case.
+            echom 'GAFFE: vim-buffer-ring: Window has no history'
 
-        return 1
+            return 1
+        endif
     endif
 
     return 0
+endfunction
+
+function! g:embrace#buffer_ring#IsNormalBuffer(bufnr) abort
+  let l:bufnr = bufnr(a:bufnr)
+
+  if l:bufnr == -1
+
+    return 0
+  endif
+
+  let l:ftype = getbufvar(l:bufnr, "&filetype")
+
+  if 0
+    \ || getbufvar(l:bufnr, '&buftype') != ''
+    \ || getbufvar(l:bufnr, "&previewwindow")
+    \ || !getbufvar(l:bufnr, "&modifiable")
+    \ || !buflisted(l:bufnr)
+    \ || l:ftype == 'qf'
+    \ || l:ftype == 'git'
+    \ || l:ftype == 'fugitiveblame'
+    \ || bufname(l:bufnr) == '-MiniBufExplorer-'
+
+    return 0
+  endif
+
+  return 1
 endfunction
 
 " ***
@@ -62,6 +95,12 @@ function! g:embrace#buffer_ring#BufSurfTargetable(bufnr) abort
     " In case the specified buffer should be ignored, do not append it to the
     " navigation history of the window.
     if g:embrace#bufsurf#BufSurfIsDisabled(a:bufnr)
+
+        return 0
+    endif
+
+    let l:inhibit_alert = 1
+    if g:embrace#buffer_ring#BufSurfDisabled(a:bufnr, l:inhibit_alert)
 
         return 0
     endif
@@ -178,7 +217,9 @@ function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr = -1) abort
     endfunction
 
     " Reset w:history and w:history_index.
-    call s:BufSurfClear()
+    if a:bufnr == -1 || !exists('w:history')
+        call s:BufSurfClear()
+    endif
 
     " Build a new history from known buffers, and set index accordingly.
     let l:index = 0

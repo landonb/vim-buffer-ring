@@ -185,8 +185,9 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
         " - tl;dr.
         let l:wipeout = 0
         call g:embrace#bufsurf#BufSurfDelete(l:bufnr, l:wipeout)
-        let w:history_index += 1
     endif
+
+    let w:history_index += 1
 
     let w:history = insert(w:history, l:bufnr, w:history_index)
 
