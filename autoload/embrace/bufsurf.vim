@@ -200,6 +200,11 @@ endfunction
 " Displays buffer navigation history for the current window.
 " - Derived from bufsurf.vim: BufSurfList
 function! g:embrace#bufsurf#BufferRingList() abort
+    if g:embrace#buffer_ring#BufSurfDisabled()
+
+        return
+    endif
+
     let l:buffer_names = []
 
     let l:curnr = g:embrace#buffer_ring#HistoryLookup(w:history_index)
