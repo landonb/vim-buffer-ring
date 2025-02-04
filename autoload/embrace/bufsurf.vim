@@ -113,7 +113,7 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
     let l:bufnr = bufnr("%")
 
     " Ignore special buffers, like Vim help, netrw buffer, project.vim tray, etc.
-    if !s:BufSurfTargetable(l:bufnr) | return | endif
+    if !g:embrace#buffer_ring#BufSurfTargetable(l:bufnr) | return | endif
 
     if !exists('w:history_index')
         " Initialize the navigation history for new windows.

@@ -29,7 +29,7 @@ endfunction
 
 " ***
 
-function! s:BufSurfTargetable(bufnr) abort
+function! g:embrace#buffer_ring#BufSurfTargetable(bufnr) abort
     " If the user bwipes a buffer, it won't exist, but its reference may.
     if !bufexists(a:bufnr)
       return 0
@@ -96,7 +96,7 @@ function! BufSurfEdit() abort
         " Or would that leave user unable to buf-surf anywhere?
         " - We'll play it safe and set to the end of known history.
         let w:history_index = l:hist_len - 1
-    elseif s:BufSurfTargetable(l:bufnr)
+    elseif g:embrace#buffer_ring#BufSurfTargetable(l:bufnr)
         let s:disabled = 1
         execute "b " . l:bufnr
         let s:disabled = 0
@@ -170,7 +170,7 @@ function! s:BufSurfInitHistory(bufnr) abort
     let l:bufnrs = filter(l:brange, 'buflisted(v:val)')
 
     for l:curnr in l:bufnrs
-        if s:BufSurfTargetable(l:curnr)
+        if g:embrace#buffer_ring#BufSurfTargetable(l:curnr)
             " echom "BufSurfInitHistory: curnr: " . l:curnr . " / type: " . type(l:curnr)
             call add(w:history, l:curnr)
             if l:curnr == a:bufnr
