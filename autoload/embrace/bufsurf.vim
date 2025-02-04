@@ -162,6 +162,7 @@ function! g:embrace#bufsurf#BufferRingList() abort
     " Same as:
     "   let l:curnr = bufnr("%")
     let l:curnr = g:embrace#buffer_ring#HistoryLookup(w:history_index)
+    " Print list in reverse so most recently visited buffers are listed first/top.
     for l:bufnr in reverse(copy(w:history))
         let l:buffer_name = bufname(l:bufnr)
         if l:buffer_name == ""
