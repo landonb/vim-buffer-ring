@@ -44,6 +44,6 @@ augroup BufSurf
     " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
     " has not yet unlisted it, etc.), but eventually its FileType (and Syntax)
     " is set to 'netrw'.
-    autocmd FileType netrw :call g:embrace#buffer_ring#BufSurfPopMatching(winbufnr(winnr()))
+    autocmd FileType netrw :call g:embrace#buffer_ring#BufSurfPopMatching(bufnr('%'))
 augroup End
 
