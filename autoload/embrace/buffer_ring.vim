@@ -90,7 +90,7 @@ function! BufSurfEdit() abort
         let l:hist_len = len(w:history)
         echom "GAFFE: BufSurf index " .. w:history_index .. " > history len " .. l:hist_len
         " DUNNO/2024-12-22: Should we reset the lookup?
-        "   call s:BufferRingClear()
+        "   call g:embrace#bufsurf#BufferRingClear()
         " Or just reset the index?
         "   let w:history_index = -1
         " Or would that leave user unable to buf-surf anywhere?
@@ -149,7 +149,7 @@ endfunction
 
 function! s:BufSurfInitHistory(bufnr) abort
     " Reset w:history and w:history_index.
-    call s:BufferRingClear()
+    call g:embrace#bufsurf#BufferRingClear()
     " Build a new history from known buffers, and set index accordingly.
     let l:index = 0
 

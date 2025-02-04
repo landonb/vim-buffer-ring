@@ -36,7 +36,7 @@ let s:disabled = 0
 " -------------------------------------------------------------------
 
 " Clear the navigation history
-function! s:BufferRingClear() abort
+function! g:embrace#bufsurf#BufferRingClear() abort
     let w:history_index = -1
     let w:history = []
 endfunction
