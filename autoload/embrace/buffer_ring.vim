@@ -83,6 +83,9 @@ function! g:embrace#buffer_ring#BufSurfPopMatching(bufnr) abort
 
     call remove(w:history, w:history_index)
     let w:history_index -= 1
+    if w:history_index < 0 && len(w:history) > 0
+        let w:history_index = 0
+    endif
 endfunction
 
 " ***

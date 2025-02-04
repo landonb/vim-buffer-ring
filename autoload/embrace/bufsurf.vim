@@ -39,33 +39,53 @@ let s:disabled = 0
 " Open the previous buffer from the window's navigation history.
 " SYNC_ME: #BufferRingReverse and #BufferRingForward are similar, but opposite.
 " - Derived from bufsurf.vim: s:BufSurfBack
-function! g:embrace#bufsurf#BufferRingReverse(limit)
-    if g:embrace#buffer_ring#BufSurfDisabled() | return | endif
+function! g:embrace#bufsurf#BufferRingReverse(until_index)
+    if g:embrace#buffer_ring#BufSurfDisabled()
 
-    " l:limit is -1 first time through; if we reach start of buffer
-    " without finding editable, this function recursed with l:limit
-    " set to w:history_index.
+        return
+    endif
 
-    let l:cur_index = w:history_index
-    while w:history_index > (a:limit + 1)
-        let w:history_index -= 1
+    " a:until_index is -1 first time through; if we reach start of buffer
+    " without finding editable, this function recursed with a:until_index
+    " set to the initial w:history_index.
+
+    let l:old_index = w:history_index
+    let l:old_len = len(w:history)
+
+    let w:history_index -= 1
+
+    while w:history_index > a:until_index
+        let l:cur_index = w:history_index
 
         if g:embrace#buffer_ring#BufSurfEdit()
-            if a:limit != -1
+            if a:until_index != -1
                 call g:embrace#buffer_ring#BufNavigateEchoWrapped()
             endif
 
             return
+        elseif l:cur_index > 0 && l:cur_index == w:history_index
+            " Unreachable path, but just in case...
+            echom 'GAFFE: vim-buffer-ring: index unmoved'
+
+            let w:history_index -= 1
+        endif
+
+        " Note that BufSurfEdit() will decrement w:history_index
+        " if w:history_index no longer indexes a valid buffer,
+        " though it won't go negative.
+        if l:cur_index == 0
+
+            break
         endif
     endwhile
 
-    if w:history_index == 0
+    if w:history_index < 1
         " Got to first element without finding editable buffer. If this function
         " did not start at final element, keep looking from back of list.
-        if a:limit == -1 && l:cur_index != (len(w:history) - 1)
+        if a:until_index == -1 && l:old_index != (l:old_len - 1)
             let w:history_index = len(w:history)
 
-            call g:embrace#bufsurf#BufferRingReverse(l:cur_index)
+            call g:embrace#bufsurf#BufferRingReverse(l:old_index)
         endif
     endif
 endfunction
@@ -73,35 +93,49 @@ endfunction
 " Open the next buffer in the navigation history for the current window.
 " SYNC_ME: #BufferRingReverse and #BufferRingForward are similar, but opposite.
 " - Derived from bufsurf.vim: BufSurfForward
-function! g:embrace#bufsurf#BufferRingForward(limit) abort
-    if g:embrace#buffer_ring#BufSurfDisabled() | return | endif
+function! g:embrace#bufsurf#BufferRingForward(until_index) abort
+    if g:embrace#buffer_ring#BufSurfDisabled()
 
-    " l:limit is -1 first time through; if we reach end of buffer
-    " without finding editable, this function recursed with l:limit
-    " set to w:history_index.
-    let l:limit = a:limit
-    if l:limit == -1
-        let l:limit = len(w:history)
+        return
     endif
 
-    let l:cur_index = w:history_index
-    while w:history_index < (l:limit - 1)
+    " a:until_index is -1 first time through; if we reach end of buffer
+    " without finding editable, this function recursed with a:until_index
+    " set to the initial w:history_index.
+    if a:until_index == -1
+        let l:range = range(w:history_index, len(w:history) - 1)
+    else
+        let l:range = range(0, a:until_index - 1)
+    endif
+
+    " Note that BufSurfPopMatching will decrement w:history_index
+    " but not past this baseline.
+    let l:old_index = w:history_index
+
+    for l:index in l:range
+        if w:history_index == len(w:history) - 1
+
+            break
+        endif
+
         let w:history_index += 1
+
         if g:embrace#buffer_ring#BufSurfEdit()
-            if l:limit != len(w:history)
+            if a:until_index != -1
                 call g:embrace#buffer_ring#BufNavigateEchoWrapped()
             endif
+
             return
         endif
-    endwhile
+    endfor
 
     if w:history_index == len(w:history) - 1
         " Got to final element without finding editable buffer. If this function
         " did not start at first element, keep looking from front of list.
-        if a:limit == -1 && l:cur_index != 0
+        if a:until_index == -1 && l:old_index != 0
             let w:history_index = -1
 
-            call g:embrace#bufsurf#BufferRingForward(l:cur_index)
+            call g:embrace#bufsurf#BufferRingForward(l:old_index)
         endif
     endif
 endfunction
