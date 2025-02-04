@@ -189,12 +189,22 @@ endfunction
 " BufSurfEdit throws 'E684: List index out of range: {n}'. Though not sure
 " why. So hardened.
 function! g:embrace#buffer_ring#HistoryLookup(history_index) abort
+    if !exists('w:history') || !exists('w:history_index')
+
+        return -1
+    endif
+
+    let l:history_index = a:history_index
+    if l:history_index == -1
+        let l:history_index = w:history_index
+    endif
+
     let l:hist_len = len(w:history)
 
-    if a:history_index < l:hist_len
+    if l:history_index < l:hist_len
         " Return the bufnr at this index.
 
-        return w:history[a:history_index]
+        return w:history[l:history_index]
     else
         " Caller will have to deal with it.
 

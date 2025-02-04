@@ -157,6 +157,11 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
     " - Mentioned because bufsurf.vim uses the latter.
     let l:bufnr = bufnr('%')
 
+    if l:bufnr == g:embrace#buffer_ring#HistoryLookup(-1)
+
+        return
+    endif
+
     " Ignore special buffers, like Vim help, netrw buffer, project.vim tray, etc.
     if !g:embrace#buffer_ring#BufSurfTargetable(l:bufnr)
 
