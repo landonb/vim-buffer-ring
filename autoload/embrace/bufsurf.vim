@@ -105,6 +105,12 @@ function! g:embrace#bufsurf#BufferRingForward(limit) abort
     endif
 endfunction
 
+function! g:embrace#bufsurf#BufSurfEditSafe(bufnr) abort
+    let s:disabled = 1
+    execute 'b ' .. a:bufnr
+    let s:disabled = 0
+endfunction
+
 " ***
 
 " Insert given buffer number to the navigation history for the current window.

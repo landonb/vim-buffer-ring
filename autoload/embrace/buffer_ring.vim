@@ -97,9 +97,7 @@ function! BufSurfEdit() abort
         " - We'll play it safe and set to the end of known history.
         let w:history_index = l:hist_len - 1
     elseif g:embrace#buffer_ring#BufSurfTargetable(l:bufnr)
-        let s:disabled = 1
-        execute "b " . l:bufnr
-        let s:disabled = 0
+        call g:embrace#bufsurf#BufSurfEditSafe(l:bufnr)
         let l:success = 1
     else
         call g:embrace#buffer_ring#BufSurfPopMatching(l:bufnr)
