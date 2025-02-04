@@ -108,7 +108,7 @@ endfunction
 " ***
 
 " Insert given buffer number to the navigation history for the current window.
-function! s:BufSurfInsertCurrent() abort
+function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
     " (lb): Note that either bufnr("%") or winbufnr(winnr()) should work here.
     let l:bufnr = bufnr("%")
 

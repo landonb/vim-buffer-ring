@@ -28,7 +28,7 @@ command BufferRingReverse :call g:embrace#bufsurf#BufferRingReverse(-1)
 command BufferRingForward :call g:embrace#bufsurf#BufferRingForward(-1)
 command BufferRingClear :call g:embrace#bufsurf#BufferRingClear()
 command BufferRingList :call g:embrace#bufsurf#BufferRingList()
-command BufferRingInsert :call <SID>BufSurfInsertCurrent()
+command BufferRingInsert :call g:embrace#bufsurf#BufSurfInsertCurrent()
 
 " -------------------------------------------------------------------
 
@@ -38,8 +38,8 @@ augroup BufSurf
     " (lb): I traced both BufEnter and WinEnter to see if I could tell why
     " both are necessary, but it was not obvious. (Intuition says just BufEnter
     " should be enough; but does not hurt to hook both events, either.)
-    autocmd BufEnter * :call s:BufSurfInsertCurrent()
-    autocmd WinEnter * :call s:BufSurfInsertCurrent()
+    autocmd BufEnter * :call g:embrace#bufsurf#BufSurfInsertCurrent()
+    autocmd WinEnter * :call g:embrace#bufsurf#BufSurfInsertCurrent()
     autocmd BufWipeout * :call s:BufSurfDelete(eval(expand('<abuf>')), 1)
     " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
     " has not yet unlisted it, etc.), but eventually its FileType (and Syntax)
