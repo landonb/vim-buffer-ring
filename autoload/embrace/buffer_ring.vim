@@ -32,6 +32,7 @@ endfunction
 function! g:embrace#buffer_ring#BufSurfTargetable(bufnr) abort
     " If the user bwipes a buffer, it won't exist, but its reference may.
     if !bufexists(a:bufnr)
+
       return 0
     endif
 
@@ -47,6 +48,7 @@ function! g:embrace#buffer_ring#BufSurfTargetable(bufnr) abort
     "   buffer could, e.g., jump to the project window.
     " - Note that quickfix *is* buflisted; see &ft check in BufSurfDisabled.
     if !buflisted(a:bufnr)
+
         return 0
     endif
 
@@ -59,6 +61,7 @@ function! g:embrace#buffer_ring#BufSurfTargetable(bufnr) abort
     " In case the specified buffer should be ignored, do not append it to the
     " navigation history of the window.
     if g:embrace#bufsurf#BufSurfIsDisabled(a:bufnr)
+
         return 0
     endif
 
@@ -85,9 +88,12 @@ endfunction
 function! g:embrace#buffer_ring#BufSurfEdit() abort
     if w:history_index < 0 | return | endif
     let l:success = 0
+
     let l:bufnr = g:embrace#buffer_ring#HistoryLookup(w:history_index)
+
     if l:bufnr == -1
         let l:hist_len = len(w:history)
+
         echom "GAFFE: BufSurf index " .. w:history_index .. " > history len " .. l:hist_len
         " DUNNO/2024-12-22: Should we reset the lookup?
         "   call g:embrace#bufsurf#BufferRingClear()
@@ -98,10 +104,12 @@ function! g:embrace#buffer_ring#BufSurfEdit() abort
         let w:history_index = l:hist_len - 1
     elseif g:embrace#buffer_ring#BufSurfTargetable(l:bufnr)
         call g:embrace#bufsurf#BufSurfEditSafe(l:bufnr)
+
         let l:success = 1
     else
         call g:embrace#buffer_ring#BufSurfPopMatching(l:bufnr)
     endif
+
     return l:success
 endfunction
 
@@ -134,11 +142,14 @@ endfunction
 " why. So hardened.
 function! g:embrace#buffer_ring#HistoryLookup(history_index) abort
     let l:hist_len = len(w:history)
+
     if a:history_index < l:hist_len
         " Return the bufnr at this index.
+
         return w:history[a:history_index]
     else
         " Caller will have to deal with it.
+
         return -1
     endif
 endfunction
@@ -181,9 +192,12 @@ endfunction
 
 function! g:embrace#buffer_ring#BufSurfEnsureIndexed() abort
     if w:history_index >= 0 && w:history_index < len(w:history)
+
         return
     endif
+
     let w:history_index = -1
+
     if len(w:history) > 0
         " GUARD/2025-02-04: This is an unreachable branch, right
         let w:history_index = 0

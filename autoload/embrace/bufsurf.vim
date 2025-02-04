@@ -136,6 +136,7 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
         call g:embrace#buffer_ring#BufSurfInitHistory(l:bufnr)
         if w:history_index != -1
             " The buffer was located in the history and the index assigned.
+
             return
         endif
     else
