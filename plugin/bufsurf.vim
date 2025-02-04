@@ -34,7 +34,7 @@ function! s:InitVariable(var, value) abort
     exec 'let ' . a:var . ' = ' . "'" . a:value . "'"
 endfunction
 
-" YOU: You can `let g:BufferRingIgnore = [<pattern>, ...]` to exclude buffers
+" USAGE: You can `let g:BufferRingIgnore = [<pattern>, ...]` to exclude buffers
 " whose name matches any <pattern>. The plugin always excludes unlisted buffers.
 call s:InitVariable('g:BufferRingIgnore', '')
 
@@ -53,11 +53,11 @@ let s:ignore_buffers = split(g:BufferRingIgnore, ',')
 " Indicates whether the plugin is enabled or not.
 let s:disabled = 0
 
-" ***
+" -------------------------------------------------------------------
 
 " Echo a BufSurf message in the Vim status line.
 " - Note: In Insert mode, you can `set noshowmode` to hide the
-"   "-- INSERT --" message, which will otherwise obscure any
+"   '-- INSERT --' message, which will otherwise obscure any
 "   other message printed while the user is in insert mode.
 "   - If you use a powerline-esque plugin, such as the spirited
 "       https://github.com/landonb/dubs_mescaline
@@ -74,17 +74,21 @@ function! s:BufSurfEcho(msg) abort
     endif
 endfunction
 
+" ***
+
 function! s:BufSurfDisabled() abort
     let l:bufnr = bufnr("%")
 
     if !buflisted(l:bufnr) || &ft == 'qf' || &previewwindow
         call s:BufSurfEcho("Navigation disabled for this buffer")
+
         return 1
     endif
 
     if len(w:history) == 0
         " (lb): Seems unlikely. But just in case.
         call s:BufSurfEcho("Window has no history!")
+
         return 1
     endif
 
