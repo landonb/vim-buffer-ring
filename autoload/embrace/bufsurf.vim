@@ -145,7 +145,7 @@ endfunction
 " ***
 
 " Displays buffer navigation history for the current window.
-function! s:BufferRingList() abort
+function! g:embrace#bufsurf#BufferRingList() abort
     let l:buffer_names = []
     " Same as:
     "   let l:curnr = bufnr("%")
