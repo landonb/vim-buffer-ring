@@ -176,7 +176,7 @@ endfunction
 
 " Returns whether recording the buffer navigation history is disabled for the
 " given buffer number *bufnr*.
-function! s:BufSurfIsDisabled(bufnr) abort
+function! g:embrace#bufsurf#BufSurfIsDisabled(bufnr) abort
     if s:disabled
         return 1
     endif

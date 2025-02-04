@@ -58,7 +58,7 @@ function! g:embrace#buffer_ring#BufSurfTargetable(bufnr) abort
 
     " In case the specified buffer should be ignored, do not append it to the
     " navigation history of the window.
-    if s:BufSurfIsDisabled(a:bufnr)
+    if g:embrace#bufsurf#BufSurfIsDisabled(a:bufnr)
         return 0
     endif
 
