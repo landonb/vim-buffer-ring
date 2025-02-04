@@ -8,6 +8,7 @@
 
 " -------------------------------------------------------------------
 
+" CALSO: BufSurfDisabled, BufSurfIsDisabled — BufSurf\(Is\)\?Disabled
 function! g:embrace#buffer_ring#BufSurfDisabled() abort
     let l:bufnr = bufnr("%")
 
