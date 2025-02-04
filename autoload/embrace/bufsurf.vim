@@ -170,8 +170,7 @@ function! g:embrace#bufsurf#BufferRingList() abort
             \ .. 'not: ' .. l:curnr .. ' != ' .. bufnr('%')
     endif
 
-    " Print list in reverse so most recently visited buffers are listed first/top.
-    for l:bufnr in reverse(copy(w:history))
+    for l:bufnr in w:history
         let l:buffer_name = bufname(l:bufnr)
         if l:buffer_name == ""
             let l:buffer_name = "[No Name #" . l:bufnr . "]"
