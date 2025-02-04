@@ -26,7 +26,11 @@ let g:loaded_plugin_buffer_ring = 1
 
 " Initialises var to value in case the variable does not yet exist.
 function! s:InitVariable(var, value) abort
-    if exists(a:var) | return | endif
+    if exists(a:var)
+
+        return
+    endif
+
     exec 'let ' . a:var . ' = ' . "'" . a:value . "'"
 endfunction
 
