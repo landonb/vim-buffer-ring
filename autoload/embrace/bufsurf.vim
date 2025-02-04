@@ -152,7 +152,8 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
         " I had been editing prior, I'd have to #BufferRingReverse back through
         " all the <F2>-created redundant buffers... so just keep 1 copy of each!
         " - tl;dr.
-        call g:embrace#bufsurf#BufSurfDelete(l:bufnr)
+        let l:wipeout = 0
+        call g:embrace#bufsurf#BufSurfDelete(l:bufnr, l:wipeout)
         let w:history_index += 1
     endif
 
@@ -263,7 +264,7 @@ endfunction
 
 " Remove indicated buffer from the current window's navigation history.
 " - Derived from bufsurf.vim: BufSurfDelete
-function! g:embrace#bufsurf#BufSurfDelete(bufnr) abort
+function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
     if !exists('w:history') || len(w:history) == 0
 
         return
@@ -296,6 +297,32 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr) abort
     let w:history_index -= l:lshift
 
     call g:embrace#buffer_ring#BufSurfEnsureIndexed()
+
+    if a:wipeout
+        " Go into each window of each tab and remove the buffer from each window's history.
+        for tab_info in gettabinfo()
+            for win_idx in tab_info.windows
+                let history = gettabwinvar(tab_info.tabnr, win_idx, 'history')
+                if type(history) != v:t_list
+                    continue
+                endif
+                let history_index = gettabwinvar(tab_info.tabnr, win_idx, 'history_index')
+
+                call filter(history, 'v:val != ' . a:bufnr)
+                " Remove duplicate buffers that have been made adjacent from the deletion.
+                " - [lb]: This is from bufsurf.vim but vim-buffer-ring doesn't allow duplicates.
+                "
+                "  call uniq(history)
+                call settabwinvar(tab_info.tabnr, win_idx, 'history', history)
+
+                " In case the current window history index is no longer valid, move it within boundaries.
+                if history_index >= len(history)
+                    let history_index = len(history) - 1
+                    call settabwinvar(tab_info.tabnr, win_idx, 'history_index', history_index)
+                endif
+            endfor
+        endfor
+    endif
 endfunction
 
 " ***
