@@ -55,27 +55,6 @@ let s:disabled = 0
 
 " -------------------------------------------------------------------
 
-" Echo a BufSurf message in the Vim status line.
-" - Note: In Insert mode, you can `set noshowmode` to hide the
-"   '-- INSERT --' message, which will otherwise obscure any
-"   other message printed while the user is in insert mode.
-"   - If you use a powerline-esque plugin, such as the spirited
-"       https://github.com/landonb/dubs_mescaline
-"     you might already have the mode indicated elsewhere.
-function! s:BufSurfEcho(msg) abort
-    if g:BufferRingMessages == 1
-        echohl WarningMsg
-        let lines = split(a:msg, '\n')
-        echomsg 'buffer_ring.vim: ' . lines[0]
-        for l:line in lines[1:]
-            echomsg l:line
-        endfor
-        echohl None
-    endif
-endfunction
-
-" ***
-
 function! s:BufSurfDisabled() abort
     let l:bufnr = bufnr("%")
 
@@ -447,6 +426,30 @@ function! s:BufSurfDelete(bufnr, ensure) abort
     if a:ensure
         call s:BufSurfEnsureIndexed(a:bufnr)
     endif
+endfunction
+
+" ***
+
+" Echo a BufSurf message in the Vim status line.
+" - Note: In Insert mode, you can `set noshowmode` to hide the
+"   '-- INSERT --' message, which will otherwise obscure any
+"   other message printed while the user is in insert mode.
+"   - If you use a powerline-esque plugin, such as the spirited
+"       https://github.com/landonb/dubs_mescaline
+"     you might already have the mode indicated elsewhere.
+function! s:BufSurfEcho(msg) abort
+    if g:BufferRingMessages != 1
+
+        return
+    endif
+
+    echohl WarningMsg
+    let lines = split(a:msg, '\n')
+    echom 'vim-buffer-ring: ' . lines[0]
+    for l:line in lines[1:]
+        echom l:line
+    endfor
+    echohl None
 endfunction
 
 " ***
