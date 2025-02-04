@@ -168,7 +168,7 @@ function! g:embrace#bufsurf#BufferRingList() abort
         endif
         let l:buffer_names = l:buffer_names + [l:buffer_name]
     endfor
-    call s:BufSurfEcho("Window buffer navigation history (* = current, ↑ = next, ↓ = prev):\n"
+    call g:embrace#bufsurf#BufSurfEcho("Window buffer navigation history (* = current, ↑ = next, ↓ = prev):\n"
         \ . join(l:buffer_names, "\n"))
 endfunction
 
@@ -233,7 +233,7 @@ endfunction
 "   - If you use a powerline-esque plugin, such as the spirited
 "       https://github.com/landonb/dubs_mescaline
 "     you might already have the mode indicated elsewhere.
-function! s:BufSurfEcho(msg) abort
+function! g:embrace#bufsurf#BufSurfEcho(msg) abort
     if g:BufferRingMessages != 1
 
         return

@@ -12,14 +12,14 @@ function! g:embrace#buffer_ring#BufSurfDisabled() abort
     let l:bufnr = bufnr("%")
 
     if !buflisted(l:bufnr) || &ft == 'qf' || &previewwindow
-        call s:BufSurfEcho("Navigation disabled for this buffer")
+        call g:embrace#bufsurf#BufSurfEcho("Navigation disabled for this buffer")
 
         return 1
     endif
 
     if len(w:history) == 0
         " (lb): Seems unlikely. But just in case.
-        call s:BufSurfEcho("Window has no history!")
+        call g:embrace#bufsurf#BufSurfEcho("Window has no history!")
 
         return 1
     endif
@@ -125,7 +125,7 @@ function! s:BufNavigateEchoWrapped() abort
 endfunction
 
 function! BufSurfEchoWrappedAround(timer) abort
-    call s:BufSurfEcho('Wrapped around history!')
+    call g:embrace#bufsurf#BufSurfEcho('Wrapped around history!')
 endfunction
 
 " -------------------------------------------------------------------
