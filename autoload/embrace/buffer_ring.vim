@@ -181,7 +181,7 @@ function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr) abort
     endfor
 endfunction
 
-function! s:BufSurfEnsureIndexed(bufnr) abort
+function! g:embrace#buffer_ring#BufSurfEnsureIndexed(bufnr) abort
     if w:history_index >= 0 && w:history_index < len(w:history)
         return
     endif

@@ -139,7 +139,7 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
     let w:history = insert(w:history, l:bufnr, w:history_index)
 
     " Ensure that w:history_index is not still -1 from #BufSurfInitHistory.
-    call s:BufSurfEnsureIndexed(l:bufnr)
+    call g:embrace#buffer_ring#BufSurfEnsureIndexed(l:bufnr)
 endfunction
 
 " ***
@@ -226,7 +226,7 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, ensure) abort
 
     let w:history_index -= l:lshift
     if a:ensure
-        call s:BufSurfEnsureIndexed(a:bufnr)
+        call g:embrace#buffer_ring#BufSurfEnsureIndexed(a:bufnr)
     endif
 endfunction
 
