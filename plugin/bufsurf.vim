@@ -64,7 +64,7 @@ endfunction
 " Open the previous buffer from the window's navigation history.
 " SYNC_ME: s:BufferRingReverse and s:BufferRingForward are similar, but opposite.
 function! s:BufferRingReverse(limit)
-    if s:BufSurfDisabled() | return | endif
+    if g:embrace#buffer_ring#BufSurfDisabled() | return | endif
 
     " l:limit is -1 first time through; if we reach start of buffer
     " without finding editable, this function recursed with l:limit
@@ -94,7 +94,7 @@ endfunction
 " Open the next buffer in the navigation history for the current window.
 " SYNC_ME: s:BufferRingReverse and s:BufferRingForward are similar, but opposite.
 function! s:BufferRingForward(limit) abort
-    if s:BufSurfDisabled() | return | endif
+    if g:embrace#buffer_ring#BufSurfDisabled() | return | endif
 
     " l:limit is -1 first time through; if we reach end of buffer
     " without finding editable, this function recursed with l:limit

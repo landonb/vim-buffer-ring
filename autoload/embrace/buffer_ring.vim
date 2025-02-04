@@ -8,7 +8,7 @@
 
 " -------------------------------------------------------------------
 
-function! s:BufSurfDisabled() abort
+function! g:embrace#buffer_ring#BufSurfDisabled() abort
     let l:bufnr = bufnr("%")
 
     if !buflisted(l:bufnr) || &ft == 'qf' || &previewwindow
