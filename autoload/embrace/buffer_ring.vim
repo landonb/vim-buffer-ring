@@ -147,7 +147,7 @@ endfunction
 
 " ***
 
-function! s:BufSurfInitHistory(bufnr) abort
+function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr) abort
     " Reset w:history and w:history_index.
     call g:embrace#bufsurf#BufferRingClear()
     " Build a new history from known buffers, and set index accordingly.

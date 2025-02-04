@@ -117,7 +117,7 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
 
     if !exists('w:history_index')
         " Initialize the navigation history for new windows.
-        call s:BufSurfInitHistory(l:bufnr)
+        call g:embrace#buffer_ring#BufSurfInitHistory(l:bufnr)
         if w:history_index != -1
             " The buffer was located in the history and the index assigned.
             return
@@ -138,7 +138,7 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
 
     let w:history = insert(w:history, l:bufnr, w:history_index)
 
-    " Ensure that w:history_index is not still -1 from BufSurfInitHistory.
+    " Ensure that w:history_index is not still -1 from #BufSurfInitHistory.
     call s:BufSurfEnsureIndexed(l:bufnr)
 endfunction
 
