@@ -159,9 +159,14 @@ endfunction
 " Displays buffer navigation history for the current window.
 function! g:embrace#bufsurf#BufferRingList() abort
     let l:buffer_names = []
-    " Same as:
-    "   let l:curnr = bufnr("%")
+
     let l:curnr = g:embrace#buffer_ring#HistoryLookup(w:history_index)
+    " Assert: l:curnr == bufnr("%")
+    if l:curnr != bufnr('%')
+        echom 'GAFFE: vim-buffer-ring: Expected bufnr(w:history_index) = bufnr("%") — '
+            \ .. 'not: ' .. l:curnr .. ' != ' .. bufnr('%')
+    endif
+
     " Print list in reverse so most recently visited buffers are listed first/top.
     for l:bufnr in reverse(copy(w:history))
         let l:buffer_name = bufname(l:bufnr)
