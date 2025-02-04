@@ -27,6 +27,7 @@ let g:loaded_plugin_buffer_ring = 1
 command BufferRingReverse :call g:embrace#bufsurf#BufferRingReverse(-1)
 command BufferRingForward :call g:embrace#bufsurf#BufferRingForward(-1)
 command BufferRingList :call g:embrace#bufsurf#BufferRingList()
+command BufSurfListAll :call g:embrace#bufsurf#BufSurfListAll()
 command BufferRingClear :call g:embrace#bufsurf#BufferRingClear()
 
 command BufferRingInsert :call g:embrace#bufsurf#BufSurfInsertCurrent()

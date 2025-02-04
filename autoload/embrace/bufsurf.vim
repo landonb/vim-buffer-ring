@@ -190,6 +190,44 @@ function! g:embrace#bufsurf#BufferRingList() abort
         \ . join(l:buffer_names, "\n"))
 endfunction
 
+" Displays buffer navigation history for all windows in all tabs.
+function g:embrace#bufsurf#BufSurfListAll() abort
+    let name_lines = []
+
+    for tab_info in gettabinfo()
+        for win_id in tab_info.windows
+            call add(name_lines, '')
+            if win_getid() == win_id
+                let cur_str = '* >'
+            else
+                let cur_str = '  >'
+            endif
+            let fmt_win = cur_str . 'tab: ' . tab_info.tabnr . ' window: ' . win_id2win(win_id)
+            call add(name_lines, fmt_win)
+
+            let history = gettabwinvar(tab_info.tabnr, win_id, 'history')
+            let history_index = gettabwinvar(tab_info.tabnr, win_id, 'history_index')
+
+            if type(history) != v:t_list
+                continue
+            endif
+
+            for hist_idx in range(len(history))
+                let name = bufname(history[hist_idx])
+                if history_index == hist_idx
+                    let cur_str = '  * >'
+                else
+                    let cur_str = '    >'
+                endif
+                let fmt_name = cur_str . name
+                call add(name_lines, fmt_name)
+            endfor
+        endfor
+    endfor
+
+    call g:embrace#bufsurf#BufSurfEcho('window buffer nav hist (* = current):' . join(name_lines, "\n"))
+endfunction
+
 " ***
 
 " Returns whether recording the buffer navigation history is disabled for the
