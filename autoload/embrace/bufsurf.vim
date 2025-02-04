@@ -116,6 +116,7 @@ endfunction
 " Insert given buffer number to the navigation history for the current window.
 function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
     " (lb): Note that either bufnr("%") or winbufnr(winnr()) should work here.
+    " - Mentioned because bufsurf.vim uses the latter.
     let l:bufnr = bufnr('%')
 
     " Ignore special buffers, like Vim help, netrw buffer, project.vim tray, etc.
@@ -149,7 +150,7 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
 
     let w:history = insert(w:history, l:bufnr, w:history_index)
 
-    " Ensure that w:history_index is not still -1 from #BufSurfInitHistory.
+    " Ensure that w:history_index is not still -1 from BufSurfInitHistory.
     call g:embrace#buffer_ring#BufSurfEnsureIndexed(l:bufnr)
 endfunction
 

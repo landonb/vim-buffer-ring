@@ -151,7 +151,7 @@ function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr) abort
     " Build a new history from known buffers, and set index accordingly.
     let l:index = 0
 
-    " WATCH/2021-02-04 20:34: Every so often, Vim won't quit (at least the
+    " WATCH/2021-02-04: Every so often, Vim won't quit (at least the
     " Vim I've got configured, with ~100 plugins). It looks like filter()
     " and one other item are causing error messages, but I'm not sure
     " which filter(). And the issue has been difficult to suss. So using
