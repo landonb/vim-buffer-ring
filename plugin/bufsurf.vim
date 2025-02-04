@@ -31,6 +31,9 @@ command BufferRingClear :call g:embrace#bufsurf#BufferRingClear()
 
 command BufferRingInsert :call g:embrace#bufsurf#BufSurfInsertCurrent()
 
+nnoremap <silent> <Plug>(buf-surf-back) :BufferRingReverse<CR>
+nnoremap <silent> <Plug>(buf-surf-forward) :BufferRingForward<CR>
+
 " -------------------------------------------------------------------
 
 " Setup the autocommands that handle MRU buffer ordering per window.

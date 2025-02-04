@@ -151,3 +151,10 @@ Copyright 2010-2021 Ton van den Heuvel. All rights reserved.
 This work is licensed under the MIT License.
 View the [LICENSE](LICENSE) file for details.
 
+It also provides `<Plug>` mappings:
+
+```vimL
+nmap ]b <Plug>(buf-surf-forward)
+nmap [b <Plug>(buf-surf-back)
+```
+
