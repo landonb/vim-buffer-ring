@@ -183,19 +183,19 @@ function! g:embrace#bufsurf#BufferRingList() abort
                 \ && l:bufnr == g:embrace#buffer_ring#HistoryLookup(w:history_index - 1))
                 \ || ((w:history_index == 0)
                 \       && l:bufnr == g:embrace#buffer_ring#HistoryLookup(-1))
-            let l:buffer_name = "↓ " . l:buffer_name
+            let l:buffer_name = "← " . l:buffer_name
         elseif (
                 \ (w:history_index < (len(w:history) - 1))
                 \ && l:bufnr == g:embrace#buffer_ring#HistoryLookup(w:history_index + 1))
                 \ || ((w:history_index == (len(w:history) - 1))
                 \       && l:bufnr == g:embrace#buffer_ring#HistoryLookup(0))
-            let l:buffer_name = "↑ " . l:buffer_name
+            let l:buffer_name = "→ " . l:buffer_name
         else
             let l:buffer_name = "  " . l:buffer_name
         endif
         let l:buffer_names = l:buffer_names + [l:buffer_name]
     endfor
-    call g:embrace#bufsurf#BufSurfEcho("Window buffer navigation history (* = current, ↑ = next, ↓ = prev):\n"
+    call g:embrace#bufsurf#BufSurfEcho("Window buffer navigation history (* = current, → = next, ← = prev):\n"
         \ . join(l:buffer_names, "\n"))
 endfunction
 
