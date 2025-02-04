@@ -30,7 +30,8 @@ call s:InitVariable('g:BufferRingMessages', 1)
 " List of buffer names that we should not track.
 let s:ignore_buffers = split(g:BufferRingIgnore, ',')
 
-" Indicates whether the plugin is enabled or not.
+" Used to temporarily disable plugin functionality when changing buffers
+" (so the BufEnter ignores the edit event, and doesn't reprocess the buffer).
 let s:disabled = 0
 
 " -------------------------------------------------------------------
@@ -109,6 +110,8 @@ function! g:embrace#bufsurf#BufferRingForward(limit) abort
 endfunction
 
 function! g:embrace#bufsurf#BufSurfEditSafe(bufnr) abort
+    " Set s:disabled, so that when BufEnter calls BufSurfInsertCurrent,
+    " the BufSurfTargetable guard stops it.
     let s:disabled = 1
     execute 'b ' .. a:bufnr
     let s:disabled = 0
