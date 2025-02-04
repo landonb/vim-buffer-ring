@@ -116,7 +116,7 @@ endfunction
 " Insert given buffer number to the navigation history for the current window.
 function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
     " (lb): Note that either bufnr("%") or winbufnr(winnr()) should work here.
-    let l:bufnr = bufnr("%")
+    let l:bufnr = bufnr('%')
 
     " Ignore special buffers, like Vim help, netrw buffer, project.vim tray, etc.
     if !g:embrace#buffer_ring#BufSurfTargetable(l:bufnr)
