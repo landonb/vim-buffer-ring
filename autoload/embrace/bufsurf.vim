@@ -42,8 +42,8 @@ function! s:BufferRingClear() abort
 endfunction
 
 " Open the previous buffer from the window's navigation history.
-" SYNC_ME: s:BufferRingReverse and s:BufferRingForward are similar, but opposite.
-function! s:BufferRingReverse(limit)
+" SYNC_ME: #BufferRingReverse and s:BufferRingForward are similar, but opposite.
+function! g:embrace#bufsurf#BufferRingReverse(limit)
     if g:embrace#buffer_ring#BufSurfDisabled() | return | endif
 
     " l:limit is -1 first time through; if we reach start of buffer
@@ -66,13 +66,13 @@ function! s:BufferRingReverse(limit)
         " did not start at final element, keep looking from back of list.
         if a:limit == -1 && l:cur_index != (len(w:history) - 1)
             let w:history_index = len(w:history)
-            call s:BufferRingReverse(l:cur_index)
+            call g:embrace#bufsurf#BufferRingReverse(l:cur_index)
         endif
     endif
 endfunction
 
 " Open the next buffer in the navigation history for the current window.
-" SYNC_ME: s:BufferRingReverse and s:BufferRingForward are similar, but opposite.
+" SYNC_ME: #BufferRingReverse and s:BufferRingForward are similar, but opposite.
 function! s:BufferRingForward(limit) abort
     if g:embrace#buffer_ring#BufSurfDisabled() | return | endif
 
@@ -129,7 +129,7 @@ function! s:BufSurfInsertCurrent() abort
         " little annoying, especially if I used my <F2> mapping, which jumps
         " back and forth between the two MRU buffers -- this would add the 2
         " buffers to the history back to back, so that to get to any file that
-        " I had been editing prior, I'd have to BufferRingReverse back through
+        " I had been editing prior, I'd have to #BufferRingReverse back through
         " all the <F2>-created redundant buffers... so just keep 1 copy of each!
         " - tl;dr.
         call s:BufSurfDelete(l:bufnr, 0)
