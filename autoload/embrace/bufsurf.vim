@@ -124,6 +124,8 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
         return
     endif
 
+    " In case no navigation history exists for the current window, initialize
+    " the navigation history.
     if !exists('w:history_index')
         " Initialize the navigation history for new windows.
         call g:embrace#buffer_ring#BufSurfInitHistory(l:bufnr)
