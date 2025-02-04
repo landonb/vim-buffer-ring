@@ -152,7 +152,7 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
         " I had been editing prior, I'd have to #BufferRingReverse back through
         " all the <F2>-created redundant buffers... so just keep 1 copy of each!
         " - tl;dr.
-        call g:embrace#bufsurf#BufSurfDelete(l:bufnr, 0)
+        call g:embrace#bufsurf#BufSurfDelete(l:bufnr)
         let w:history_index += 1
     endif
 
@@ -263,7 +263,7 @@ endfunction
 
 " Remove indicated buffer from the current window's navigation history.
 " - Derived from bufsurf.vim: BufSurfDelete
-function! g:embrace#bufsurf#BufSurfDelete(bufnr, ensure) abort
+function! g:embrace#bufsurf#BufSurfDelete(bufnr) abort
     if !exists('w:history') || len(w:history) == 0
 
         return
@@ -294,9 +294,8 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, ensure) abort
     call filter(w:history, 'v:val !=' . a:bufnr)
 
     let w:history_index -= l:lshift
-    if a:ensure
-        call g:embrace#buffer_ring#BufSurfEnsureIndexed()
-    endif
+
+    call g:embrace#buffer_ring#BufSurfEnsureIndexed()
 endfunction
 
 " ***
