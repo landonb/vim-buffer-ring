@@ -44,7 +44,7 @@ function! g:embrace#buffer_ring#BufSurfTargetable(bufnr) abort
     "   - Though note project tray buffer is initially buflisted,
     "     until the first BufEnter callback (see s:DoSetup()).
     " - If we didn't ignore these, a BufSurf operation in a 'regular'
-    "   could, e.g., jump to the project window.
+    "   buffer could, e.g., jump to the project window.
     " - Note that quickfix *is* buflisted; see &ft check in BufSurfDisabled.
     if !buflisted(a:bufnr)
         return 0

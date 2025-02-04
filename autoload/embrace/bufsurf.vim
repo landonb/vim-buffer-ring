@@ -36,6 +36,7 @@ let s:disabled = 0
 " -------------------------------------------------------------------
 
 " Clear the navigation history
+" - Derived from bufsurf.vim: s:BufSurfClear
 function! g:embrace#bufsurf#BufferRingClear() abort
     let w:history_index = -1
     let w:history = []
@@ -43,6 +44,7 @@ endfunction
 
 " Open the previous buffer from the window's navigation history.
 " SYNC_ME: #BufferRingReverse and #BufferRingForward are similar, but opposite.
+" - Derived from bufsurf.vim: s:BufSurfBack
 function! g:embrace#bufsurf#BufferRingReverse(limit)
     if g:embrace#buffer_ring#BufSurfDisabled() | return | endif
 
@@ -73,6 +75,7 @@ endfunction
 
 " Open the next buffer in the navigation history for the current window.
 " SYNC_ME: #BufferRingReverse and #BufferRingForward are similar, but opposite.
+" - Derived from bufsurf.vim: BufSurfForward
 function! g:embrace#bufsurf#BufferRingForward(limit) abort
     if g:embrace#buffer_ring#BufSurfDisabled() | return | endif
 
@@ -114,6 +117,7 @@ endfunction
 " ***
 
 " Insert given buffer number to the navigation history for the current window.
+" - Derived from bufsurf.vim: BufSurfAppend
 function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
     " (lb): Note that either bufnr("%") or winbufnr(winnr()) should work here.
     " - Mentioned because bufsurf.vim uses the latter.
@@ -157,6 +161,7 @@ endfunction
 " ***
 
 " Displays buffer navigation history for the current window.
+" - Derived from bufsurf.vim: BufSurfList
 function! g:embrace#bufsurf#BufferRingList() abort
     let l:buffer_names = []
 
@@ -253,6 +258,7 @@ function! g:embrace#bufsurf#BufSurfIsDisabled(bufnr) abort
 endfunction
 
 " Remove indicated buffer from the current window's navigation history.
+" - Derived from bufsurf.vim: BufSurfDelete
 function! g:embrace#bufsurf#BufSurfDelete(bufnr, ensure) abort
     if !exists('w:history') || len(w:history) == 0 | return | endif
 
@@ -295,6 +301,7 @@ endfunction
 "   - If you use a powerline-esque plugin, such as the spirited
 "       https://github.com/landonb/dubs_mescaline
 "     you might already have the mode indicated elsewhere.
+" - Derived from bufsurf.vim: BufSurfEcho
 function! g:embrace#bufsurf#BufSurfEcho(msg) abort
     if g:BufferRingMessages != 1
 
