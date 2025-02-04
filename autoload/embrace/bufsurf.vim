@@ -261,7 +261,10 @@ endfunction
 " Remove indicated buffer from the current window's navigation history.
 " - Derived from bufsurf.vim: BufSurfDelete
 function! g:embrace#bufsurf#BufSurfDelete(bufnr, ensure) abort
-    if !exists('w:history') || len(w:history) == 0 | return | endif
+    if !exists('w:history') || len(w:history) == 0
+
+        return
+    endif
 
     let l:lshift = count(w:history[0:w:history_index], a:bufnr)
 

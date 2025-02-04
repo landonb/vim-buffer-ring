@@ -86,7 +86,11 @@ endfunction
 " ***
 
 function! g:embrace#buffer_ring#BufSurfEdit() abort
-    if w:history_index < 0 | return | endif
+    if w:history_index < 0
+
+        return
+    endif
+
     let l:success = 0
 
     let l:bufnr = g:embrace#buffer_ring#HistoryLookup(w:history_index)
