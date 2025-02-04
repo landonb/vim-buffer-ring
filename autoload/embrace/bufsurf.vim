@@ -132,7 +132,7 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
         " I had been editing prior, I'd have to #BufferRingReverse back through
         " all the <F2>-created redundant buffers... so just keep 1 copy of each!
         " - tl;dr.
-        call s:BufSurfDelete(l:bufnr, 0)
+        call g:embrace#bufsurf#BufSurfDelete(l:bufnr, 0)
         let w:history_index += 1
     endif
 
@@ -191,7 +191,7 @@ function! s:BufSurfIsDisabled(bufnr) abort
 endfunction
 
 " Remove indicated buffer from the current window's navigation history.
-function! s:BufSurfDelete(bufnr, ensure) abort
+function! g:embrace#bufsurf#BufSurfDelete(bufnr, ensure) abort
     if !exists('w:history') || len(w:history) == 0 | return | endif
 
     let l:lshift = count(w:history[0:w:history_index], a:bufnr)
