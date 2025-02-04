@@ -40,7 +40,7 @@ augroup BufSurf
     " should be enough; but does not hurt to hook both events, either.)
     autocmd BufEnter * :call g:embrace#bufsurf#BufSurfInsertCurrent()
     autocmd WinEnter * :call g:embrace#bufsurf#BufSurfInsertCurrent()
-    autocmd BufWipeout * :call g:embrace#bufsurf#BufSurfDelete(eval(expand('<abuf>')), 1)
+    autocmd BufWipeout * :call g:embrace#bufsurf#BufSurfDelete(str2nr(expand('<abuf>')), 1)
     " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
     " has not yet unlisted it, etc.), but eventually its FileType (and Syntax)
     " is set to 'netrw'.
