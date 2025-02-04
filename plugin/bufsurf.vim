@@ -25,7 +25,7 @@ let g:loaded_plugin_buffer_ring = 1
 " -------------------------------------------------------------------
 
 " Initialises var to value in case the variable does not yet exist.
-function! s:InitVariable(var, value)
+function! s:InitVariable(var, value) abort
     if exists(a:var) | return | endif
     exec 'let ' . a:var . ' = ' . "'" . a:value . "'"
 endfunction
@@ -58,7 +58,7 @@ let s:disabled = 0
 "   - If you use a powerline-esque plugin, such as the spirited
 "       https://github.com/landonb/dubs_mescaline
 "     you might already have the mode indicated elsewhere.
-function! s:BufSurfEcho(msg)
+function! s:BufSurfEcho(msg) abort
     if g:BufferRingMessages == 1
         echohl WarningMsg
         let lines = split(a:msg, '\n')
@@ -70,7 +70,7 @@ function! s:BufSurfEcho(msg)
     endif
 endfunction
 
-function! s:BufSurfDisabled()
+function! s:BufSurfDisabled() abort
     let l:bufnr = bufnr("%")
 
     if !buflisted(l:bufnr) || &ft == 'qf' || &previewwindow
@@ -91,7 +91,7 @@ endfunction
 
 " Returns whether recording the buffer navigation history is disabled for the
 " given buffer number *bufnr*.
-function! s:BufSurfIsDisabled(bufnr)
+function! s:BufSurfIsDisabled(bufnr) abort
     if s:disabled
         return 1
     endif
@@ -105,7 +105,7 @@ function! s:BufSurfIsDisabled(bufnr)
     return 0
 endfunction
 
-function! s:BufSurfTargetable(bufnr)
+function! s:BufSurfTargetable(bufnr) abort
     " If the user bwipes a buffer, it won't exist, but its reference may.
     if !bufexists(a:bufnr)
       return 0
@@ -141,7 +141,7 @@ function! s:BufSurfTargetable(bufnr)
     return 1
 endfunction
 
-function! s:BufSurfPopMatching(bufnr)
+function! s:BufSurfPopMatching(bufnr) abort
     " Removes buffer indicated *iff* it's the currently indexed history element.
     " - I.e., the BufEnter hook adds the netrw buffer, and here we remove it.
     " - Note that FileType (and Syntax) is triggered twice on an `:Explore ...`
@@ -158,7 +158,7 @@ endfunction
 
 " ***
 
-function! BufSurfEdit()
+function! BufSurfEdit() abort
     if w:history_index < 0 | return | endif
     let l:success = 0
     let l:bufnr = s:HistoryLookup(w:history_index)
@@ -183,7 +183,7 @@ function! BufSurfEdit()
     return l:success
 endfunction
 
-function! s:BufNavigateEchoWrapped()
+function! s:BufNavigateEchoWrapped() abort
     " Sorta like how Vim's `wrapscan` prints when it wraps around:
     "   "search hit BOTTOM, continuing at TOP",
     " we show a message when we wrap around the buffer queue.
@@ -200,7 +200,7 @@ function! s:BufNavigateEchoWrapped()
     let timer = timer_start(1, 'BufSurfEchoWrappedAround')
 endfunction
 
-function! BufSurfEchoWrappedAround(timer)
+function! BufSurfEchoWrappedAround(timer) abort
     call s:BufSurfEcho('Wrapped around history!')
 endfunction
 
@@ -236,7 +236,7 @@ endfunction
 
 " Open the next buffer in the navigation history for the current window.
 " SYNC_ME: s:BufferRingReverse and s:BufferRingForward are similar, but opposite.
-function! s:BufferRingForward(limit)
+function! s:BufferRingForward(limit) abort
     if s:BufSurfDisabled() | return | endif
 
     " l:limit is -1 first time through; if we reach end of buffer
@@ -274,7 +274,7 @@ endfunction
 " because unsaved changes, when I try to next/prev to them (<C-k>/<C-j>),
 " BufSurfEdit throws 'E684: List index out of range: {n}'. Though not sure
 " why. So hardened.
-function! s:HistoryLookup(history_index)
+function! s:HistoryLookup(history_index) abort
     let l:hist_len = len(w:history)
     if a:history_index < l:hist_len
         " Return the bufnr at this index.
@@ -288,12 +288,12 @@ endfunction
 " ***
 
 " Clear the navigation history
-function! s:BufferRingClear()
+function! s:BufferRingClear() abort
     let w:history_index = -1
     let w:history = []
 endfunction
 
-function! s:BufSurfInitHistory(bufnr)
+function! s:BufSurfInitHistory(bufnr) abort
     " Reset w:history and w:history_index.
     call s:BufferRingClear()
     " Build a new history from known buffers, and set index accordingly.
@@ -327,7 +327,7 @@ function! s:BufSurfInitHistory(bufnr)
     endfor
 endfunction
 
-function! s:BufSurfEnsureIndexed(bufnr)
+function! s:BufSurfEnsureIndexed(bufnr) abort
     if w:history_index >= 0 && w:history_index < len(w:history)
         return
     endif
@@ -341,7 +341,7 @@ function! s:BufSurfEnsureIndexed(bufnr)
 endfunction
 
 " Insert given buffer number to the navigation history for the current window.
-function! s:BufSurfInsertCurrent()
+function! s:BufSurfInsertCurrent() abort
     " (lb): Note that either bufnr("%") or winbufnr(winnr()) should work here.
     let l:bufnr = bufnr("%")
 
@@ -378,7 +378,7 @@ endfunction
 " ***
 
 " Displays buffer navigation history for the current window.
-function! s:BufferRingList()
+function! s:BufferRingList() abort
     let l:buffer_names = []
     " Same as:
     "   let l:curnr = bufnr("%")
@@ -408,7 +408,7 @@ endfunction
 " ***
 
 " Remove indicated buffer from the current window's navigation history.
-function! s:BufSurfDelete(bufnr, ensure)
+function! s:BufSurfDelete(bufnr, ensure) abort
     if !exists('w:history') || len(w:history) == 0 | return | endif
 
     let l:lshift = count(w:history[0:w:history_index], a:bufnr)
