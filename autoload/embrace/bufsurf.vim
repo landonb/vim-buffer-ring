@@ -36,13 +36,6 @@ let s:disabled = 0
 
 " -------------------------------------------------------------------
 
-" Clear the navigation history
-" - Derived from bufsurf.vim: s:BufSurfClear
-function! g:embrace#bufsurf#BufferRingClear() abort
-    let w:history_index = -1
-    let w:history = []
-endfunction
-
 " Open the previous buffer from the window's navigation history.
 " SYNC_ME: #BufferRingReverse and #BufferRingForward are similar, but opposite.
 " - Derived from bufsurf.vim: s:BufSurfBack

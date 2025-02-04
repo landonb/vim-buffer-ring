@@ -161,9 +161,21 @@ endfunction
 
 " ***
 
-function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr) abort
+function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr = -1) abort
+    let l:bufnr = a:bufnr
+    if l:bufnr == -1
+        let l:bufnr = bufnr('%')
+    endif
+
+    " Clear the navigation history
+    function! s:BufSurfClear() abort
+        let w:history_index = -1
+        let w:history = []
+    endfunction
+
     " Reset w:history and w:history_index.
-    call g:embrace#bufsurf#BufferRingClear()
+    call s:BufSurfClear()
+
     " Build a new history from known buffers, and set index accordingly.
     let l:index = 0
 
@@ -187,7 +199,7 @@ function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr) abort
         if g:embrace#buffer_ring#BufSurfTargetable(l:curnr)
             " echom "BufSurfInitHistory: curnr: " . l:curnr . " / type: " . type(l:curnr)
             call add(w:history, l:curnr)
-            if l:curnr == a:bufnr
+            if l:curnr == l:bufnr
                 let w:history_index = l:index
             endif
             let l:index += 1
