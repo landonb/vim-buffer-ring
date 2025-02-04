@@ -65,7 +65,7 @@ function! s:BufSurfTargetable(bufnr) abort
     return 1
 endfunction
 
-function! s:BufSurfPopMatching(bufnr) abort
+function! g:embrace#buffer_ring#BufSurfPopMatching(bufnr) abort
     " Removes buffer indicated *iff* it's the currently indexed history element.
     " - I.e., the BufEnter hook adds the netrw buffer, and here we remove it.
     " - Note that FileType (and Syntax) is triggered twice on an `:Explore ...`
@@ -102,7 +102,7 @@ function! BufSurfEdit() abort
         let s:disabled = 0
         let l:success = 1
     else
-        call s:BufSurfPopMatching(l:bufnr)
+        call g:embrace#buffer_ring#BufSurfPopMatching(l:bufnr)
     endif
     return l:success
 endfunction
