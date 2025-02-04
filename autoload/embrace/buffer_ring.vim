@@ -12,14 +12,14 @@ function! g:embrace#buffer_ring#BufSurfDisabled() abort
     let l:bufnr = bufnr("%")
 
     if !buflisted(l:bufnr) || &ft == 'qf' || &previewwindow
-        call g:embrace#bufsurf#BufSurfEcho("Navigation disabled for this buffer")
+        call g:embrace#bufsurf#BufSurfEcho("vim-buffer-ring: Navigation disabled for this buffer")
 
         return 1
     endif
 
     if len(w:history) == 0
         " (lb): Seems unlikely. But just in case.
-        call g:embrace#bufsurf#BufSurfEcho("Window has no history!")
+        call g:embrace#bufsurf#BufSurfEcho("GAFFE: vim-buffer-ring: Window has no history")
 
         return 1
     endif
@@ -179,16 +179,16 @@ function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr) abort
     endfor
 endfunction
 
-function! g:embrace#buffer_ring#BufSurfEnsureIndexed(bufnr) abort
+function! g:embrace#buffer_ring#BufSurfEnsureIndexed() abort
     if w:history_index >= 0 && w:history_index < len(w:history)
         return
     endif
     let w:history_index = -1
     if len(w:history) > 0
+        " GUARD/2025-02-04: This is an unreachable branch, right
         let w:history_index = 0
-        if a:bufnr != -1
-            echom "ERROR: Did not determine w:history_index for buffer: " . a:bufnr
-        endif
+
+        echom 'GAFFE: vim-buffer-ring: w:history_index unassigned'
     endif
 endfunction
 
