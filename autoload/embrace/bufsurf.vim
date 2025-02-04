@@ -328,7 +328,7 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
     endif
 
     " Remove the buffer from the current window's history.
-    call filter(w:history, 'v:val !=' . a:bufnr)
+    call filter(w:history, 'v:val !=' .. a:bufnr)
 
     let w:history_index -= l:lshift
 
