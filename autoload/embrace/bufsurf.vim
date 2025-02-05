@@ -287,36 +287,41 @@ function g:embrace#bufsurf#BufSurfListAll() abort
 
     for tab_info in gettabinfo()
         for win_id in tab_info.windows
-            call add(name_lines, '')
-            if win_getid() == win_id
-                let cur_str = '* >'
-            else
-                let cur_str = '  >'
-            endif
-            let fmt_win = cur_str . 'tab: ' . tab_info.tabnr . ' window: ' . win_id2win(win_id)
-            call add(name_lines, fmt_win)
-
-            let history = gettabwinvar(tab_info.tabnr, win_id, 'history')
-            let history_index = gettabwinvar(tab_info.tabnr, win_id, 'history_index')
-
-            if type(history) != v:t_list
-                continue
-            endif
-
-            for hist_idx in range(len(history))
-                let name = bufname(history[hist_idx])
-                if history_index == hist_idx
-                    let cur_str = '  * >'
-                else
-                    let cur_str = '    >'
-                endif
-                let fmt_name = cur_str . name
-                call add(name_lines, fmt_name)
-            endfor
+            call g:embrace#bufsurf#PrettyPrintAddTabWin(name_lines, tab_info.tabnr, win_id)
         endfor
     endfor
 
     call g:embrace#bufsurf#BufSurfEcho('window buffer nav hist (* = current):' . join(name_lines, "\n"))
+endfunction
+
+function! g:embrace#bufsurf#PrettyPrintAddTabWin(name_lines, tabnr, win_id) abort
+    call add(a:name_lines, '')
+    if win_getid() == a:win_id
+        let cur_str = '* >'
+    else
+        let cur_str = '  >'
+    endif
+    let fmt_win = cur_str . 'tab: ' . a:tabnr . ' window: ' . win_id2win(a:win_id)
+    call add(a:name_lines, fmt_win)
+
+    let l:history = gettabwinvar(a:tabnr, a:win_id, 'history')
+    let l:history_index = gettabwinvar(a:tabnr, a:win_id, 'history_index')
+
+    if type(l:history) != v:t_list
+
+        return
+    endif
+
+    for hist_idx in range(len(history))
+        let name = bufname(history[hist_idx])
+        if history_index == hist_idx
+            let cur_str = '  * >'
+        else
+            let cur_str = '    >'
+        endif
+        let fmt_name = cur_str . name
+        call add(a:name_lines, fmt_name)
+    endfor
 endfunction
 
 function! g:embrace#bufsurf#PrettyPrintHistory(history, history_index, curnr) abort
