@@ -325,12 +325,12 @@ function! g:embrace#bufsurf#PrettyPrintAddTabWin(name_lines, tabnr, win_id) abor
         return
     endif
 
-    let l:curnr = -1
+    let l:bufnr = -1
     if l:history_index != -1
-        let l:curnr = l:history[l:history_index]
+        let l:bufnr = l:history[l:history_index]
     endif
 
-    let l:bring_list = g:embrace#bufsurf#PrettyPrintHistory(l:history, l:history_index, l:curnr, '  ')
+    let l:bring_list = g:embrace#bufsurf#PrettyPrintHistory(l:history, l:history_index, l:bufnr, '  ')
 
     call extend(a:name_lines, l:bring_list)
 endfunction
