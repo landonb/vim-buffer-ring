@@ -289,7 +289,7 @@ function! g:embrace#bufsurf#BufferRingList() abort
 endfunction
 
 " Displays buffer navigation history for all windows in all tabs.
-function g:embrace#bufsurf#BufSurfListAll() abort
+function g:embrace#bufsurf#BufferRingListAll() abort
     let name_lines = []
 
     for tab_info in gettabinfo()
@@ -406,7 +406,7 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
     " because the Reverse/Forward commands call BufSurfEdit, which checks
     " BufSurfTargetable — which calls bufexists.
     " - But cleaning up preemptively makes the output from the
-    "   BufferRingList and BufSurfListAll commands look better.
+    "   BufferRingList and BufferRingListAll commands look better.
     if a:wipeout
         " Go into each window of each tab and remove the buffer from each window's history.
         for l:tab_info in gettabinfo()

@@ -27,7 +27,7 @@ let g:loaded_plugin_buffer_ring = 1
 command BufferRingReverse :call g:embrace#bufsurf#BufferRingReverse(-1)
 command BufferRingForward :call g:embrace#bufsurf#BufferRingForward(-1)
 command BufferRingList :call g:embrace#bufsurf#BufferRingList()
-command BufSurfListAll :call g:embrace#bufsurf#BufSurfListAll()
+command BufferRingListAll :call g:embrace#bufsurf#BufferRingListAll()
 command -bang BufferRingClear :call g:embrace#buffer_ring#BufSurfInitHistory(-1, <bang>0)
 
 nnoremap <silent> <Plug>(buf-surf-back) :BufferRingReverse<CR>
