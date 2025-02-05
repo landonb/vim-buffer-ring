@@ -150,14 +150,68 @@ endfunction
 
 " ***
 
+function! s:CopyHistoryIfSplitFromPreviousWindow(bufnr) abort
+    if exists('w:history')
+        \ || !exists('s:prev_bufwintab')
+        \ || s:prev_bufwintab.bufnr != a:bufnr
+
+        return 0
+    endif
+
+    let l:winnr = s:prev_bufwintab.winnr
+
+    if tabpagenr() == s:prev_bufwintab.tabnr
+        if l:winnr == winnr()
+            " When Vim splits window, the old window generally
+            " shifts rightward, and the new window is created
+            " before the old window. So our previous winnr is
+            " now winnr+1, and the new winnr() is the same as
+            " the previous value.
+            let l:winnr = s:prev_bufwintab.winnr + 1
+        endif
+    endif
+
+    let l:o_winid = win_getid(l:winnr, s:prev_bufwintab.tabnr)
+
+    let l:o_bufnr = winbufnr(l:o_winid)
+
+    if l:o_bufnr == a:bufnr
+        " Window likely split from existing window.
+        " Clone the other window's history.
+        let l:history = gettabwinvar(s:prev_bufwintab.tabnr, l:winnr, 'history')
+
+        if type(l:history) == v:t_list
+            let w:history = copy(l:history)
+            let w:history_index = gettabwinvar(
+                \ s:prev_bufwintab.tabnr, l:winnr, 'history_index')
+
+            return 1
+        endif
+    endif
+
+    return 0
+endfunction
+
+function! s:UpdatePrevBufWinTab() abort
+    let s:prev_bufwintab = { 'bufnr': bufnr('%'), 'winnr': winnr(), 'tabnr': tabpagenr()}
+endfunction
+
 " Insert given buffer number to the navigation history for the current window.
 " - Derived from bufsurf.vim: BufSurfAppend
-function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
+function! g:embrace#bufsurf#BufSurfInsertCurrent(copy_history) abort
     " (lb): Note that either bufnr('%') or winbufnr(winnr()) should work here.
     " - Mentioned because bufsurf.vim uses the latter.
     let l:bufnr = bufnr('%')
 
+    let l:copied = 0
+    if a:copy_history
+        let l:copied = s:CopyHistoryIfSplitFromPreviousWindow(l:bufnr)
+    endif
+
+    call s:UpdatePrevBufWinTab()
+
     if l:bufnr == g:embrace#buffer_ring#HistoryLookup()
+        " Current w:history_index already refs. l:bufnr.
 
         return
     endif
@@ -396,6 +450,10 @@ endfunction
 
 " -------------------------------------------------------------------
 
+" SAVVY/2025-02-04: On :edit, BufEnter; but on :(v)split, WinEnter.
+" - When the latter, look for buffer open in adjacent window, and
+"   copy its history.
+
 " Setup the autocommands that handle MRU buffer ordering per window.
 function! g:embrace#bufsurf#CreateAutocommands() abort
     augroup BufSurf
@@ -403,8 +461,8 @@ function! g:embrace#bufsurf#CreateAutocommands() abort
         " (lb): I traced both BufEnter and WinEnter to see if I could tell why
         " both are necessary, but it was not obvious. (Intuition says just BufEnter
         " should be enough; but does not hurt to hook both events, either.)
-        autocmd BufEnter * :call g:embrace#bufsurf#BufSurfInsertCurrent()
-        autocmd WinEnter * :call g:embrace#bufsurf#BufSurfInsertCurrent()
+        autocmd BufEnter * :call g:embrace#bufsurf#BufSurfInsertCurrent(0)
+        autocmd WinEnter * :call g:embrace#bufsurf#BufSurfInsertCurrent(1)
         autocmd BufWipeout * :call g:embrace#bufsurf#BufSurfDelete(str2nr(expand('<abuf>')), 1)
         autocmd BufDelete * :call g:embrace#bufsurf#BufSurfDelete(str2nr(expand('<abuf>')), 1)
         " The netrw buffer is not identifiable on BufEnter or WinEnter (netrw.vim
