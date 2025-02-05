@@ -351,6 +351,7 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
                 let history = gettabwinvar(tab_info.tabnr, win_idx, 'history')
 
                 if type(history) != v:t_list
+                    " E.g., empty string (if 'history' undefined).
 
                     continue
                 endif
