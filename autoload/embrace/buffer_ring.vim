@@ -199,20 +199,28 @@ function! g:embrace#buffer_ring#HistoryLookup(history_index = -1) abort
         let l:history_index = w:history_index
     endif
 
-    let l:hist_len = len(w:history)
-
-    if l:history_index < l:hist_len
-        " Return the bufnr at this index.
-
-        return w:history[l:history_index]
-    else
-        " Caller will have to deal with it.
+    if l:history_index == -1
 
         return -1
     endif
+
+    if l:history_index < len(w:history)
+
+        return w:history[l:history_index]
+    elseif w:history_index >= len(w:history)
+        echom 'GAFFE: vim-buffer-ring: history_index too large'
+    endif
+
+    return -1
 endfunction
 
 " ***
+
+" Clear the navigation history
+function! g:embrace#buffer_ring#BufSurfClear() abort
+    let w:history = []
+    let w:history_index = -1
+endfunction
 
 function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr = -1, bang = 0) abort
     let l:bufnr = a:bufnr
@@ -220,15 +228,9 @@ function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr = -1, bang = 0) abort
         let l:bufnr = bufnr('%')
     endif
 
-    " Clear the navigation history
-    function! s:BufSurfClear() abort
-        let w:history = []
-        let w:history_index = -1
-    endfunction
-
     " Reset w:history and w:history_index.
     if a:bufnr == -1 || a:bang || !exists('w:history') || !exists('w:history_index')
-        call s:BufSurfClear()
+        call g:embrace#buffer_ring#BufSurfClear()
     endif
 
     if a:bang
