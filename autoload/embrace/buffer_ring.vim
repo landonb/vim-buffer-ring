@@ -17,7 +17,7 @@ function! g:embrace#buffer_ring#BufSurfDisabled(bufnr = -1, inhibit_alert = 0) a
 
     if !g:embrace#buffer_ring#IsNormalBuffer(l:bufnr)
         if !a:inhibit_alert
-            call g:embrace#bufsurf#BufSurfEcho("vim-buffer-ring: Navigation disabled for this buffer")
+            call g:embrace#bufsurf#BufSurfEcho('Navigation disabled for this buffer')
         endif
 
         return 1
