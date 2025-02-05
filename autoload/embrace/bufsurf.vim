@@ -236,6 +236,12 @@ function! g:embrace#bufsurf#IndexBuffer(bufnr) abort
 
             return
         endif
+        " else, w:history populated with all other normal buffers,
+        " but a:bufnr not located, and w:history_index still -1.
+        " Which happens on startup.
+        if len(w:history)
+            echom 'GAFFE: vim-buffer-ring: Current buffer not added to history?!'
+        endif
     else
         " Remove all entries for this buffer and insert again at current index.
         " (lb): Orig. vim-bufsurf behavior would add the same buffer multiple
