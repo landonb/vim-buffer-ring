@@ -298,8 +298,12 @@ function! g:embrace#bufsurf#BufferRingList() abort
         endif
         let l:buffer_names = l:buffer_names + [l:buffer_name]
     endfor
-    call g:embrace#bufsurf#BufSurfEcho("Window buffer navigation history (* = current, → = next, ← = prev):\n"
-        \ . join(l:buffer_names, "\n"))
+
+    call g:embrace#bufsurf#BufSurfEcho(" \n"
+        \ .. "Window buffer navigation history (* = current, → = next, ← = prev)\n"
+        \ .. "──────────────────────────────────────────────────────────────────\n"
+        \ .. join(l:buffer_names, "\n")
+        \ .. "\n\n", 1, ' ', ' ')
 endfunction
 
 " Displays buffer navigation history for all windows in all tabs.
@@ -433,18 +437,23 @@ endfunction
 "       https://github.com/landonb/dubs_mescaline
 "     you might already have the mode indicated elsewhere.
 " - Derived from bufsurf.vim: BufSurfEcho
-function! g:embrace#bufsurf#BufSurfEcho(msg) abort
+function! g:embrace#bufsurf#BufSurfEcho(msg, plain = 0, prefix_1 = 'vim-buffer-ring: ', prefix_n = '') abort
     if g:BufferRingMessages != 1
 
         return
     endif
 
-    echohl WarningMsg
-    let lines = split(a:msg, '\n')
-    echom 'vim-buffer-ring: ' . lines[0]
-    for l:line in lines[1:]
-        echom l:line
+    let l:lines = split(a:msg, '\n')
+
+    if !a:plain
+        echohl WarningMsg
+    endif
+
+    echom a:prefix_1 .. l:lines[0]
+    for l:line in l:lines[1:]
+        echom a:prefix_n .. l:line
     endfor
+
     echohl None
 endfunction
 
