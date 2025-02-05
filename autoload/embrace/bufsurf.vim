@@ -321,8 +321,8 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
     if a:wipeout
         " Go into each window of each tab and remove the buffer from each window's history.
         for l:tab_info in gettabinfo()
-            for win_idx in l:tab_info.windows
-                let history = gettabwinvar(l:tab_info.tabnr, win_idx, 'history')
+            for l:win_idx in l:tab_info.windows
+                let history = gettabwinvar(l:tab_info.tabnr, l:win_idx, 'history')
 
                 if type(history) != v:t_list
                     " E.g., empty string (if 'history' undefined).
@@ -330,7 +330,7 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
                     continue
                 endif
 
-                let history_index = gettabwinvar(l:tab_info.tabnr, win_idx, 'history_index')
+                let history_index = gettabwinvar(l:tab_info.tabnr, l:win_idx, 'history_index')
 
                 call filter(history, 'v:val != ' . a:bufnr)
                 " Remove duplicate buffers that have been made adjacent from the deletion.
@@ -338,13 +338,13 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
                 "
                 "  call uniq(history)
 
-                call settabwinvar(l:tab_info.tabnr, win_idx, 'history', history)
+                call settabwinvar(l:tab_info.tabnr, l:win_idx, 'history', history)
 
                 " In case the current window history index is no longer valid, move it within boundaries.
                 if history_index >= len(history)
                     let history_index = len(history) - 1
 
-                    call settabwinvar(l:tab_info.tabnr, win_idx, 'history_index', history_index)
+                    call settabwinvar(l:tab_info.tabnr, l:win_idx, 'history_index', history_index)
                 endif
             endfor
         endfor
