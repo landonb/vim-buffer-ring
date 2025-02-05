@@ -174,7 +174,7 @@ endfunction
 " In case no navigation history exists for the current window,
 " initialize the navigation history.
 function! g:embrace#bufsurf#IndexBuffer(bufnr) abort
-    if !exists('w:history')
+    if !exists('w:history') || !exists('w:history_index')
         " Initialize the navigation history for new windows.
         call g:embrace#buffer_ring#BufSurfInitHistory(a:bufnr)
         if w:history_index != -1
