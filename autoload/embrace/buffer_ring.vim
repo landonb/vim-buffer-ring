@@ -222,8 +222,8 @@ function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr = -1, bang = 0) abort
 
     " Clear the navigation history
     function! s:BufSurfClear() abort
-        let w:history_index = -1
         let w:history = []
+        let w:history_index = -1
     endfunction
 
     " Reset w:history and w:history_index.
