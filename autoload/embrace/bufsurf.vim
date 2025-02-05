@@ -153,7 +153,7 @@ endfunction
 " Insert given buffer number to the navigation history for the current window.
 " - Derived from bufsurf.vim: BufSurfAppend
 function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
-    " (lb): Note that either bufnr("%") or winbufnr(winnr()) should work here.
+    " (lb): Note that either bufnr('%') or winbufnr(winnr()) should work here.
     " - Mentioned because bufsurf.vim uses the latter.
     let l:bufnr = bufnr('%')
 
