@@ -30,8 +30,6 @@ command BufferRingList :call g:embrace#bufsurf#BufferRingList()
 command BufSurfListAll :call g:embrace#bufsurf#BufSurfListAll()
 command BufferRingClear :call g:embrace#buffer_ring#BufSurfInitHistory(-1)
 
-command BufferRingInsert :call g:embrace#bufsurf#BufSurfInsertCurrent()
-
 nnoremap <silent> <Plug>(buf-surf-back) :BufferRingReverse<CR>
 nnoremap <silent> <Plug>(buf-surf-forward) :BufferRingForward<CR>
 
