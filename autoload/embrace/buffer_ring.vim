@@ -234,29 +234,25 @@ function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr = -1) abort
     " Build a new history from known buffers, and set index accordingly.
     let l:index = 0
 
-    " WATCH/2021-02-04: Every so often, Vim won't quit (at least the
-    " Vim I've got configured, with ~100 plugins). It looks like filter()
-    " and one other item are causing error messages, but I'm not sure
-    " which filter(). And the issue has been difficult to suss. So using
-    " trace messages while I figure this out. Here's the original call:
+    " HSTRY/2025-02-04: This used to iterate from 1 to the last buffer
+    " number, weeding out numbers not associated with a buffer. E.g.,
     "
-    "   let l:bufnrs = filter(range(1, bufnr('$')), 'buflisted(v:val)')
+    "   let l:brange = range(1, bufnr('$'))
+    "   let l:bufnrs = filter(l:brange, 'buflisted(v:val)')
     "
-    " And here's the same call, but with a warning message:
-    let l:brange = range(1, bufnr('$'))
-    if len(l:brange) == 0
-        " LATER/2021-02-06: This path is temporary, to help author diagnose issue.
-        echom "WARNING: No l:brange!!!"
-    endif
-    let l:bufnrs = filter(l:brange, 'buflisted(v:val)')
+    " Alternatively, call |getbufinfo|.
+    let l:buffers = getbufinfo({'buflisted': 1})
 
-    for l:curnr in l:bufnrs
+    for l:buf in l:buffers
+        let l:curnr = l:buf.bufnr
+
         if g:embrace#buffer_ring#BufSurfTargetable(l:curnr)
-            " echom "BufSurfInitHistory: curnr: " . l:curnr . " / type: " . type(l:curnr)
             call add(w:history, l:curnr)
+
             if l:curnr == l:bufnr
                 let w:history_index = l:index
             endif
+
             let l:index += 1
         endif
     endfor
