@@ -115,7 +115,7 @@ function! g:embrace#buffer_ring#BufSurfPopMatching(bufnr) abort
     "   command, hence the check that the bufnr passed is the current element.
     if !exists("w:history")
        \ || len(w:history) <= 0
-       \ || a:bufnr != g:embrace#buffer_ring#HistoryLookup(w:history_index)
+       \ || a:bufnr != g:embrace#buffer_ring#HistoryLookup()
 
         return
     endif
@@ -137,7 +137,7 @@ function! g:embrace#buffer_ring#BufSurfEdit() abort
 
     let l:success = 0
 
-    let l:bufnr = g:embrace#buffer_ring#HistoryLookup(w:history_index)
+    let l:bufnr = g:embrace#buffer_ring#HistoryLookup()
 
     if l:bufnr == -1
         let l:hist_len = len(w:history)
@@ -188,7 +188,7 @@ endfunction
 " because unsaved changes, when I try to next/prev to them (<C-k>/<C-j>),
 " BufSurfEdit throws 'E684: List index out of range: {n}'. Though not sure
 " why. So hardened.
-function! g:embrace#buffer_ring#HistoryLookup(history_index) abort
+function! g:embrace#buffer_ring#HistoryLookup(history_index = -1) abort
     if !exists('w:history') || !exists('w:history_index')
 
         return -1

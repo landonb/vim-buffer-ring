@@ -157,7 +157,7 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
     " - Mentioned because bufsurf.vim uses the latter.
     let l:bufnr = bufnr('%')
 
-    if l:bufnr == g:embrace#buffer_ring#HistoryLookup(-1)
+    if l:bufnr == g:embrace#buffer_ring#HistoryLookup()
 
         return
     endif
@@ -212,7 +212,7 @@ function! g:embrace#bufsurf#BufferRingList() abort
 
     let l:buffer_names = []
 
-    let l:curnr = g:embrace#buffer_ring#HistoryLookup(w:history_index)
+    let l:curnr = g:embrace#buffer_ring#HistoryLookup()
     " Assert: l:curnr == bufnr("%")
     if l:curnr != bufnr('%')
         echom 'GAFFE: vim-buffer-ring: Expected bufnr(w:history_index) = bufnr("%") — '
