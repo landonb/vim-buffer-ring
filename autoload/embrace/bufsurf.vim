@@ -195,9 +195,6 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
     let w:history_index += 1
 
     let w:history = insert(w:history, l:bufnr, w:history_index)
-
-    " Ensure that w:history_index is not still -1 from BufSurfInitHistory.
-    call g:embrace#buffer_ring#BufSurfEnsureIndexed()
 endfunction
 
 " ***
@@ -311,25 +308,15 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
         return
     endif
 
-    let l:lshift = count(w:history[0:w:history_index], a:bufnr)
+    " If deleted buffer listed before current index, we'll shift 1 left.
+    let l:lshift = 0
+    if w:history_index > 0
+        let l:lshift = count(w:history[0:w:history_index-1], a:bufnr)
 
-    " We do not have to worry about l:bufnr == l:curnr because, if so,
-    " Vim will close the window, and it and its w:history_index disappear.
-
-    " WATCH/2021-02-04 20:34: Every so often, Vim won't quit, and it prints
-    " an error about filter() and one other thing. But not sure which filter.
-    " - But I'd guess this one, which happens on delete, because the issue
-    "   happens when I'm using <Alt-f e> to close all files/buffers, before
-    "   I'd use <Aft-f x> to exit Vim.
-    " - See longer comment above (also at 2021-02-04 20:34).
-    if len(w:history) == 0
-        " LATER/2021-02-06: This path is temporary, to help author diagnose issue.
-        " TRACK/2024-11-21: I haven't seen this warning *in ages*, or perhaps
-        " just not in MacVim (I haven't been running Vim on Linux much since
-        " eary 2024).
-        echom "buffer_ring.vim: GAFFE: No w:history!"
-    " else
-    "     echom 'w:history (' . len(w:history) . '): ' . join(w:history, ' :: ')
+        if l:lshift > 1
+            " Unreachable branch.
+            echom 'GAFFE: vim-buffer-ring: Deleted buffer had been listed more than once'
+        endif
     endif
 
     " Remove the buffer from the current window's history.
@@ -337,7 +324,7 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
 
     let w:history_index -= l:lshift
 
-    call g:embrace#buffer_ring#BufSurfEnsureIndexed()
+    let w:history_index = min([w:history_index, len(w:history) - 1])
 
     " Note that vim-buffer-ring will skip deleted buffers anyway, because
     " the Reverse/Forward commands call BufSurfEdit, which checks

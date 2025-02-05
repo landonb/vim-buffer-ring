@@ -258,21 +258,5 @@ function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr = -1) abort
     endfor
 endfunction
 
-function! g:embrace#buffer_ring#BufSurfEnsureIndexed() abort
-    if w:history_index >= 0 && w:history_index < len(w:history)
-
-        return
-    endif
-
-    let w:history_index = -1
-
-    if len(w:history) > 0
-        " GUARD/2025-02-04: This is an unreachable branch, right
-        let w:history_index = 0
-
-        echom 'GAFFE: vim-buffer-ring: w:history_index unassigned'
-    endif
-endfunction
-
 " -------------------------------------------------------------------
 
