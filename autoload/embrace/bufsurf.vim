@@ -308,21 +308,8 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
         return
     endif
 
-    " If deleted buffer listed before current index, we'll shift 1 left.
-    let l:lshift = 0
-    if w:history_index > 0
-        let l:lshift = count(w:history[0:w:history_index-1], a:bufnr)
-
-        if l:lshift > 1
-            " Unreachable branch.
-            echom 'GAFFE: vim-buffer-ring: Deleted buffer had been listed more than once'
-        endif
-    endif
-
-    " Remove the buffer from the current window's history.
-    call filter(w:history, 'v:val !=' .. a:bufnr)
-
-    let w:history_index -= l:lshift
+    let w:history_index = g:embrace#bufsurf#RemoveBufnrFromHistory(
+        \ w:history, w:history_index, a:bufnr)
 
     let w:history_index = min([w:history_index, len(w:history) - 1])
 
@@ -362,6 +349,29 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
             endfor
         endfor
     endif
+endfunction
+
+function! g:embrace#bufsurf#RemoveBufnrFromHistory(history, history_index, bufnr) abort
+    " If deleted buffer listed before current index, we'll shift 1 left.
+    let l:lshift = 0
+
+    if a:history_index > 0
+        let l:lshift = count(a:history[0:a:history_index-1], a:bufnr)
+
+        if l:lshift > 1
+            " Unreachable branch.
+            echom 'GAFFE: vim-buffer-ring: Deleted buffer had been listed more than once'
+        endif
+    endif
+
+    " Remove the buffer from the current window's history.
+    call filter(a:history, 'v:val !=' .. a:bufnr)
+
+    let l:new_index = a:history_index - l:lshift
+
+    let l:new_index = min([l:new_index, len(a:history) - 1])
+
+    return l:new_index
 endfunction
 
 " ***
