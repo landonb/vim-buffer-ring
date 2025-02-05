@@ -142,13 +142,8 @@ function! g:embrace#buffer_ring#BufSurfEdit() abort
     if l:bufnr == -1
         let l:hist_len = len(w:history)
 
-        echom 'GAFFE: BufSurf index ' .. w:history_index .. ' > history len ' .. l:hist_len
-        " DUNNO/2024-12-22: Should we reset the lookup?
-        "   call g:embrace#bufsurf#BufferRingClear()
-        " Or just reset the index?
-        "   let w:history_index = -1
-        " Or would that leave user unable to buf-surf anywhere?
-        " - We'll play it safe and set to the end of known history.
+        echom 'GAFFE: History index ' .. w:history_index .. ' > history len ' .. l:hist_len
+
         let w:history_index = l:hist_len - 1
     elseif g:embrace#buffer_ring#BufSurfTargetable(l:bufnr)
         call g:embrace#bufsurf#BufSurfEditSafe(l:bufnr)
