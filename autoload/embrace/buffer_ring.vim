@@ -142,7 +142,7 @@ function! g:embrace#buffer_ring#BufSurfEdit() abort
     if l:bufnr == -1
         let l:hist_len = len(w:history)
 
-        echom "GAFFE: BufSurf index " .. w:history_index .. " > history len " .. l:hist_len
+        echom 'GAFFE: BufSurf index ' .. w:history_index .. ' > history len ' .. l:hist_len
         " DUNNO/2024-12-22: Should we reset the lookup?
         "   call g:embrace#bufsurf#BufferRingClear()
         " Or just reset the index?
