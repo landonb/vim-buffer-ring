@@ -326,11 +326,11 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
 
     let w:history_index = min([w:history_index, len(w:history) - 1])
 
-    " Note that vim-buffer-ring will skip deleted buffers anyway, because
-    " the Reverse/Forward commands call BufSurfEdit, which checks
+    " Note that vim-buffer-ring won't duplicate any buffer in the history,
+    " because the Reverse/Forward commands call BufSurfEdit, which checks
     " BufSurfTargetable — which calls bufexists.
     " - But cleaning up preemptively makes the output from the
-    "   BufferRingList and BufSurfListAll commands better.
+    "   BufferRingList and BufSurfListAll commands look better.
     if a:wipeout
         " Go into each window of each tab and remove the buffer from each window's history.
         for tab_info in gettabinfo()
