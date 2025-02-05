@@ -296,6 +296,7 @@ function! g:embrace#bufsurf#BufferRingList() abort
         else
             let l:buffer_name = "  " . l:buffer_name
         endif
+        let l:buffer_name = printf('%-3d', l:bufnr) .. ' ' .. l:buffer_name
         let l:buffer_names = l:buffer_names + [l:buffer_name]
     endfor
 
