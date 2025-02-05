@@ -330,7 +330,7 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
                     continue
                 endif
 
-                let history_index = gettabwinvar(l:tab_info.tabnr, l:win_idx, 'history_index')
+                let l:history_index = gettabwinvar(l:tab_info.tabnr, l:win_idx, 'history_index')
 
                 call filter(l:history, 'v:val != ' . a:bufnr)
                 " Remove duplicate buffers that have been made adjacent from the deletion.
@@ -341,10 +341,10 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
                 call settabwinvar(l:tab_info.tabnr, l:win_idx, 'history', l:history)
 
                 " In case the current window history index is no longer valid, move it within boundaries.
-                if history_index >= len(l:history)
-                    let history_index = len(l:history) - 1
+                if l:history_index >= len(l:history)
+                    let l:history_index = len(l:history) - 1
 
-                    call settabwinvar(l:tab_info.tabnr, l:win_idx, 'history_index', history_index)
+                    call settabwinvar(l:tab_info.tabnr, l:win_idx, 'history_index', l:history_index)
                 endif
             endfor
         endfor
