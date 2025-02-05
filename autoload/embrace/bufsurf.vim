@@ -292,11 +292,17 @@ function g:embrace#bufsurf#BufSurfListAll() abort
         endfor
     endfor
 
-    call g:embrace#bufsurf#BufSurfEcho('window buffer nav hist (* = current):' . join(name_lines, "\n"))
+    let l:plain = 1
+    call g:embrace#bufsurf#BufSurfEcho(" \n"
+        \ .. "Window buffer navigation history (* = current, → = next, ← = prev)\n"
+        \ .. "──────────────────────────────────────────────────────────────────\n"
+        \ .. join(name_lines, "\n")
+        \ .. "\n\n", l:plain, ' ', ' ')
 endfunction
 
 function! g:embrace#bufsurf#PrettyPrintAddTabWin(name_lines, tabnr, win_id) abort
     call add(a:name_lines, '')
+
     if win_getid() == a:win_id
         let cur_str = '* >'
     else
@@ -313,19 +319,17 @@ function! g:embrace#bufsurf#PrettyPrintAddTabWin(name_lines, tabnr, win_id) abor
         return
     endif
 
-    for hist_idx in range(len(history))
-        let name = bufname(history[hist_idx])
-        if history_index == hist_idx
-            let cur_str = '  * >'
-        else
-            let cur_str = '    >'
-        endif
-        let fmt_name = cur_str . name
-        call add(a:name_lines, fmt_name)
-    endfor
+    let l:curnr = -1
+    if l:history_index != -1
+        let l:curnr = l:history[l:history_index]
+    endif
+
+    let l:bring_list = g:embrace#bufsurf#PrettyPrintHistory(l:history, l:history_index, l:curnr, '  ')
+
+    call extend(a:name_lines, l:bring_list)
 endfunction
 
-function! g:embrace#bufsurf#PrettyPrintHistory(history, history_index, curnr) abort
+function! g:embrace#bufsurf#PrettyPrintHistory(history, history_index, curnr, prefix = '') abort
     let l:bring_list = []
     
     for l:bufnr in a:history
@@ -353,7 +357,7 @@ function! g:embrace#bufsurf#PrettyPrintHistory(history, history_index, curnr) ab
             let l:buffer_name = "  " . l:buffer_name
         endif
 
-        let l:buffer_name = printf('%-3d', l:bufnr) .. ' ' .. l:buffer_name
+        let l:buffer_name = a:prefix .. printf('%-3d', l:bufnr) .. ' ' .. l:buffer_name
 
         let l:bring_list = l:bring_list + [l:buffer_name]
     endfor
