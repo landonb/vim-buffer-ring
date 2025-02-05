@@ -327,7 +327,16 @@ function! g:embrace#bufsurf#PrettyPrintAddTabWin(name_lines, tabnr, win_id) abor
 
     let l:bufnr = -1
     if l:history_index != -1
-        let l:bufnr = l:history[l:history_index]
+        " Note that if a special buffer is showing, the w:history might be
+        " set (it might have been originally copied when the window was
+        " split), so we don't want the tab-window's index, e.g., not this:
+        "   let l:bufnr = l:history[l:history_index]  " wrong
+        let l:bufnr = winbufnr(a:win_id)
+    endif
+
+    if !g:embrace#buffer_ring#BufSurfTargetable(l:bufnr)
+
+        return
     endif
 
     let l:bring_list = g:embrace#bufsurf#PrettyPrintHistory(l:history, l:history_index, l:bufnr, '  ')
