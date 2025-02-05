@@ -265,8 +265,6 @@ function! g:embrace#bufsurf#BufferRingList() abort
         return
     endif
 
-    let l:buffer_names = []
-
     let l:curnr = g:embrace#buffer_ring#HistoryLookup()
     " Assert: l:curnr == bufnr("%")
     if l:curnr != bufnr('%')
@@ -274,36 +272,12 @@ function! g:embrace#bufsurf#BufferRingList() abort
             \ .. 'not: ' .. l:curnr .. ' != ' .. bufnr('%')
     endif
 
-    for l:bufnr in w:history
-        let l:buffer_name = bufname(l:bufnr)
-        if l:buffer_name == ""
-            let l:buffer_name = "[No Name #" . l:bufnr . "]"
-        endif
-        if l:bufnr == l:curnr
-            let l:buffer_name = "* " . l:buffer_name
-        elseif (
-                \ (w:history_index > 0)
-                \ && l:bufnr == g:embrace#buffer_ring#HistoryLookup(w:history_index - 1))
-                \ || ((w:history_index == 0)
-                \       && l:bufnr == g:embrace#buffer_ring#HistoryLookup(-1))
-            let l:buffer_name = "← " . l:buffer_name
-        elseif (
-                \ (w:history_index < (len(w:history) - 1))
-                \ && l:bufnr == g:embrace#buffer_ring#HistoryLookup(w:history_index + 1))
-                \ || ((w:history_index == (len(w:history) - 1))
-                \       && l:bufnr == g:embrace#buffer_ring#HistoryLookup(0))
-            let l:buffer_name = "→ " . l:buffer_name
-        else
-            let l:buffer_name = "  " . l:buffer_name
-        endif
-        let l:buffer_name = printf('%-3d', l:bufnr) .. ' ' .. l:buffer_name
-        let l:buffer_names = l:buffer_names + [l:buffer_name]
-    endfor
+    let l:bring_list = g:embrace#bufsurf#PrettyPrintHistory(w:history, w:history_index, l:curnr)
 
     call g:embrace#bufsurf#BufSurfEcho(" \n"
         \ .. "Window buffer navigation history (* = current, → = next, ← = prev)\n"
         \ .. "──────────────────────────────────────────────────────────────────\n"
-        \ .. join(l:buffer_names, "\n")
+        \ .. join(l:bring_list, "\n")
         \ .. "\n\n", 1, ' ', ' ')
 endfunction
 
@@ -343,6 +317,42 @@ function g:embrace#bufsurf#BufSurfListAll() abort
     endfor
 
     call g:embrace#bufsurf#BufSurfEcho('window buffer nav hist (* = current):' . join(name_lines, "\n"))
+endfunction
+
+function! g:embrace#bufsurf#PrettyPrintHistory(history, history_index, curnr) abort
+    let l:bring_list = []
+    
+    for l:bufnr in a:history
+        let l:buffer_name = bufname(l:bufnr)
+
+        if l:buffer_name == ""
+            let l:buffer_name = "[No Name #" . l:bufnr . "]"
+        endif
+
+        if l:bufnr == a:curnr
+            let l:buffer_name = "* " . l:buffer_name
+        elseif (
+                \ (a:history_index > 0)
+                \ && l:bufnr == g:embrace#buffer_ring#HistoryLookup(a:history_index - 1))
+                \ || ((a:history_index == 0)
+                \       && l:bufnr == g:embrace#buffer_ring#HistoryLookup(-1))
+            let l:buffer_name = "← " . l:buffer_name
+        elseif (
+                \ (a:history_index < (len(a:history) - 1))
+                \ && l:bufnr == g:embrace#buffer_ring#HistoryLookup(a:history_index + 1))
+                \ || ((a:history_index == (len(a:history) - 1))
+                \       && l:bufnr == g:embrace#buffer_ring#HistoryLookup(0))
+            let l:buffer_name = "→ " . l:buffer_name
+        else
+            let l:buffer_name = "  " . l:buffer_name
+        endif
+
+        let l:buffer_name = printf('%-3d', l:bufnr) .. ' ' .. l:buffer_name
+
+        let l:bring_list = l:bring_list + [l:buffer_name]
+    endfor
+
+    return l:bring_list
 endfunction
 
 " ***
