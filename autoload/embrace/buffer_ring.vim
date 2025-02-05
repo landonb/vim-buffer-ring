@@ -227,7 +227,7 @@ function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr = -1, bang = 0) abort
     endfunction
 
     " Reset w:history and w:history_index.
-    if a:bufnr == -1 || a:bang || !exists('w:history')
+    if a:bufnr == -1 || a:bang || !exists('w:history') || !exists('w:history_index')
         call s:BufSurfClear()
     endif
 
