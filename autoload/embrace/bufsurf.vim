@@ -168,11 +168,15 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
         return
     endif
 
-    " In case no navigation history exists for the current window, initialize
-    " the navigation history.
-    if !exists('w:history_index')
+    call g:embrace#bufsurf#IndexBuffer(l:bufnr)
+endfunction
+
+" In case no navigation history exists for the current window,
+" initialize the navigation history.
+function! g:embrace#bufsurf#IndexBuffer(bufnr) abort
+    if !exists('w:history')
         " Initialize the navigation history for new windows.
-        call g:embrace#buffer_ring#BufSurfInitHistory(l:bufnr)
+        call g:embrace#buffer_ring#BufSurfInitHistory(a:bufnr)
         if w:history_index != -1
             " The buffer was located in the history and the index assigned.
 
@@ -189,12 +193,12 @@ function! g:embrace#bufsurf#BufSurfInsertCurrent() abort
         " all the <F2>-created redundant buffers... so just keep 1 copy of each!
         " - tl;dr.
         let l:wipeout = 0
-        call g:embrace#bufsurf#BufSurfDelete(l:bufnr, l:wipeout)
+        call g:embrace#bufsurf#BufSurfDelete(a:bufnr, l:wipeout)
     endif
 
     let w:history_index += 1
 
-    let w:history = insert(w:history, l:bufnr, w:history_index)
+    let w:history = insert(w:history, a:bufnr, w:history_index)
 endfunction
 
 " ***
