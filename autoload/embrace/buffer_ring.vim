@@ -214,7 +214,7 @@ endfunction
 
 " ***
 
-function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr = -1) abort
+function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr = -1, bang = 0) abort
     let l:bufnr = a:bufnr
     if l:bufnr == -1
         let l:bufnr = bufnr('%')
@@ -227,35 +227,46 @@ function! g:embrace#buffer_ring#BufSurfInitHistory(bufnr = -1) abort
     endfunction
 
     " Reset w:history and w:history_index.
-    if a:bufnr == -1 || !exists('w:history')
+    if a:bufnr == -1 || a:bang || !exists('w:history')
         call s:BufSurfClear()
     endif
 
-    " Build a new history from known buffers, and set index accordingly.
-    let l:index = 0
+    if a:bang
+        " When user calls :BufferRingClear! the window buffer history
+        " is reduced to just the currently loaded buffer.
+        " - This is somewhat of an anti-pattern. Normally every window's
+        "   history includes all normal, listed, non-hidden, non-special
+        "   buffers. Author is unsure if there's a use case for restricting
+        "   the history of a specific window, but now you can.
+        call add(w:history, l:bufnr)
+        let w:history_index = 0
+    else
+        " Build a new history from known buffers, and set index accordingly.
+        let l:index = 0
 
-    " HSTRY/2025-02-04: This used to iterate from 1 to the last buffer
-    " number, weeding out numbers not associated with a buffer. E.g.,
-    "
-    "   let l:brange = range(1, bufnr('$'))
-    "   let l:bufnrs = filter(l:brange, 'buflisted(v:val)')
-    "
-    " Alternatively, call |getbufinfo|.
-    let l:buffers = getbufinfo({'buflisted': 1})
+        " HSTRY/2025-02-04: This used to iterate from 1 to the last buffer
+        " number, weeding out numbers not associated with a buffer. E.g.,
+        "
+        "   let l:brange = range(1, bufnr('$'))
+        "   let l:bufnrs = filter(l:brange, 'buflisted(v:val)')
+        "
+        " Alternatively, call |getbufinfo|.
+        let l:buffers = getbufinfo({'buflisted': 1})
 
-    for l:buf in l:buffers
-        let l:curnr = l:buf.bufnr
+        for l:buf in l:buffers
+            let l:curnr = l:buf.bufnr
 
-        if g:embrace#buffer_ring#BufSurfTargetable(l:curnr)
-            call add(w:history, l:curnr)
+            if g:embrace#buffer_ring#BufSurfTargetable(l:curnr)
+                call add(w:history, l:curnr)
 
-            if l:curnr == l:bufnr
-                let w:history_index = l:index
+                if l:curnr == l:bufnr
+                    let w:history_index = l:index
+                endif
+
+                let l:index += 1
             endif
-
-            let l:index += 1
-        endif
-    endfor
+        endfor
+    endif
 endfunction
 
 " -------------------------------------------------------------------
