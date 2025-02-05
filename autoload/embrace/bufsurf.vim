@@ -274,11 +274,12 @@ function! g:embrace#bufsurf#BufferRingList() abort
 
     let l:bring_list = g:embrace#bufsurf#PrettyPrintHistory(w:history, w:history_index, l:curnr)
 
+    let l:plain = 1
     call g:embrace#bufsurf#BufSurfEcho(" \n"
         \ .. "Window buffer navigation history (* = current, → = next, ← = prev)\n"
         \ .. "──────────────────────────────────────────────────────────────────\n"
         \ .. join(l:bring_list, "\n")
-        \ .. "\n\n", 1, ' ', ' ')
+        \ .. "\n\n", l:plain, ' ', ' ')
 endfunction
 
 " Displays buffer navigation history for all windows in all tabs.
@@ -454,7 +455,7 @@ endfunction
 "     you might already have the mode indicated elsewhere.
 " - Derived from bufsurf.vim: BufSurfEcho
 function! g:embrace#bufsurf#BufSurfEcho(msg, plain = 0, prefix_1 = 'vim-buffer-ring: ', prefix_n = '') abort
-    if g:BufferRingMessages != 1
+    if !a:plain && g:BufferRingMessages != 1
 
         return
     endif
