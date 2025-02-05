@@ -332,20 +332,11 @@ function! g:embrace#bufsurf#BufSurfDelete(bufnr, wipeout) abort
 
                 let l:history_index = gettabwinvar(l:tab_info.tabnr, l:win_idx, 'history_index')
 
-                call filter(l:history, 'v:val != ' . a:bufnr)
-                " Remove duplicate buffers that have been made adjacent from the deletion.
-                " - [lb]: This is from bufsurf.vim but vim-buffer-ring doesn't allow duplicates.
-                "
-                "  call uniq(l:history)
+                let l:history_index = g:embrace#bufsurf#RemoveBufnrFromHistory(
+                    \ l:history, l:history_index, a:bufnr)
 
                 call settabwinvar(l:tab_info.tabnr, l:win_idx, 'history', l:history)
-
-                " In case the current window history index is no longer valid, move it within boundaries.
-                if l:history_index >= len(l:history)
-                    let l:history_index = len(l:history) - 1
-
-                    call settabwinvar(l:tab_info.tabnr, l:win_idx, 'history_index', l:history_index)
-                endif
+                call settabwinvar(l:tab_info.tabnr, l:win_idx, 'history_index', l:history_index)
             endfor
         endfor
     endif
