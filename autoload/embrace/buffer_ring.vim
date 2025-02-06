@@ -45,6 +45,13 @@ function! g:embrace#buffer_ring#IsNormalBuffer(bufnr) abort
 
     let l:ftype = getbufvar(l:bufnr, "&filetype")
 
+    let l:bufname = bufname(l:bufnr)
+
+    " A new netrw window, e.g., `:edit path/to/dir/`,
+    " identifies as a normal buffer. The only indication
+    " that it's not is if its name is a directory path.
+    let l:probably_netrw = isdirectory(l:bufname)
+
     if 0
         \ || getbufvar(l:bufnr, '&buftype') != ''
         \ || getbufvar(l:bufnr, "&previewwindow")
@@ -53,7 +60,8 @@ function! g:embrace#buffer_ring#IsNormalBuffer(bufnr) abort
         \ || l:ftype == 'qf'
         \ || l:ftype == 'git'
         \ || l:ftype == 'fugitiveblame'
-        \ || bufname(l:bufnr) == '-MiniBufExplorer-'
+        \ || l:bufname == '-MiniBufExplorer-'
+        \ || l:probably_netrw
 
         return 0
     endif

@@ -496,6 +496,37 @@ endfunction
 
 " -------------------------------------------------------------------
 
+" Ensure :netrw buffers are automatically deleted, otherwise
+" they persist and don't play well.
+" - They cannot be deleted, e.g., :bw doesn't remove it.
+" - They don't identify themselves clearly.
+"   - After using :netrw to open the file, if you query the :netrw
+"     buffer using its bufnr(), it looks normal
+"       (à la g:embrace#buffer_ring#IsNormalBuffer)
+"     but when you :b switch to it and then run bufnr(), the bufnr
+"     is +1 what you used previously (and what vim-buffer-ring has
+"     in its history).
+" - One option might be to check if the buffer name is a directory
+"   path, and to inhibit previous/next from loading that buffer.
+"   - E.g., one user checks these three indicators:
+"       isdirectory(bufname(v:val))
+"         \ && getbufvar(v:val, "&modified")
+"         \ && getbufvar(v:val, "&readonly"))
+"     - REFER:
+"       https://github.com/justinmk/config/blob/59b064bb9433449d308b7b889922e2d1c77a30c5/.vimrc#L662
+" - Another option is to disable *fastbrowse*:
+"       *g:netrw_fastbrowse*     =0: slow speed directory browsing;
+"                                    never re-uses directory listings;
+"                                    always obtains directory listings.
+"   - The key feature being "never re-uses directory listings".
+"
+" THANX: https://github.com/tpope/vim-vinegar/issues/13#issuecomment-489440040
+"   https://github.com/tpope/vim-vinegar/issues/13
+" BEGET: https://vi.stackexchange.com/questions/14622/how-can-i-close-the-netrw-buffer
+function! g:embrace#bufsurf#ConfigureNetrw()
+    let g:netrw_fastbrowse = 0
+endfunction
+
 " SAVVY/2025-02-04: On :edit, BufEnter; but on :(v)split, WinEnter.
 " - When the latter, look for buffer open in adjacent window, and
 "   copy its history.
@@ -516,5 +547,10 @@ function! g:embrace#bufsurf#CreateAutocommands() abort
         " is set to 'netrw'.
         autocmd FileType netrw :call g:embrace#buffer_ring#BufSurfPopMatching(bufnr('%'))
     augroup End
+endfunction
+
+function! g:embrace#bufsurf#CreateAutocommandsAndConfigureNetrw()
+    call g:embrace#bufsurf#ConfigureNetrw()
+    call g:embrace#bufsurf#CreateAutocommands()
 endfunction
 

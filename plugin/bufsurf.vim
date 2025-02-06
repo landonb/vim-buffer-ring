@@ -35,5 +35,5 @@ nnoremap <silent> <Plug>(buf-surf-forward) :BufferRingForward<CR>
 
 " -------------------------------------------------------------------
 
-call g:embrace#bufsurf#CreateAutocommands()
+call g:embrace#bufsurf#CreateAutocommandsAndConfigureNetrw()
 
