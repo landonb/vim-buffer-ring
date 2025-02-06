@@ -36,29 +36,29 @@ function! g:embrace#buffer_ring#BufSurfDisabled(bufnr = -1, inhibit_alert = 0) a
 endfunction
 
 function! g:embrace#buffer_ring#IsNormalBuffer(bufnr) abort
-  let l:bufnr = bufnr(a:bufnr)
+    let l:bufnr = bufnr(a:bufnr)
 
-  if l:bufnr == -1
+    if l:bufnr == -1
 
-    return 0
-  endif
+        return 0
+    endif
 
-  let l:ftype = getbufvar(l:bufnr, "&filetype")
+    let l:ftype = getbufvar(l:bufnr, "&filetype")
 
-  if 0
-    \ || getbufvar(l:bufnr, '&buftype') != ''
-    \ || getbufvar(l:bufnr, "&previewwindow")
-    \ || !getbufvar(l:bufnr, "&modifiable")
-    \ || !buflisted(l:bufnr)
-    \ || l:ftype == 'qf'
-    \ || l:ftype == 'git'
-    \ || l:ftype == 'fugitiveblame'
-    \ || bufname(l:bufnr) == '-MiniBufExplorer-'
+    if 0
+        \ || getbufvar(l:bufnr, '&buftype') != ''
+        \ || getbufvar(l:bufnr, "&previewwindow")
+        \ || !getbufvar(l:bufnr, "&modifiable")
+        \ || !buflisted(l:bufnr)
+        \ || l:ftype == 'qf'
+        \ || l:ftype == 'git'
+        \ || l:ftype == 'fugitiveblame'
+        \ || bufname(l:bufnr) == '-MiniBufExplorer-'
 
-    return 0
-  endif
+        return 0
+    endif
 
-  return 1
+    return 1
 endfunction
 
 " ***
