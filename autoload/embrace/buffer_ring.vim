@@ -219,6 +219,15 @@ endfunction
 
 " ***
 
+" USYNC: Some other plugins hackily interact with w:history:
+" - REFER: See s:EscapeFromNetrwBuffer() which uses the history index
+"   to escape from a netrw buffer to the most recent normal file buffer
+"   (where `:edit #` doesn't always work because each directory traversal
+"   creates a new buffer, so `:edit #` would just jump back to the last
+"   netrw directory if you've been changing directories):
+"   https://github.com/embrace-vim/vim-netrw-explore-map#🥾
+"     ~/.kit/nvim/embrace-vim/start/vim-netrw-explore-map/autoload/embrace/explore.vim
+
 " Clear the navigation history
 function! g:embrace#buffer_ring#BufSurfClear() abort
     let w:history = []
