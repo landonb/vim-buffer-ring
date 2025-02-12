@@ -1,6 +1,6 @@
 *buffer-ring.txt*  Circular, most-recently-used buffer navigator.     *buffer-ring*
 
-MRU Buffer Ring Navigation~
+MRU Buffer Ring Navigation 💍 ~
 
 Forker: Landon Bouma <https://tallybark.com/>
 Author: Ton van den Heuvel <https://github.com/ton/>
