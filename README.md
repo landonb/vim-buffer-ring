@@ -1,4 +1,4 @@
-# vim-buffer-ring
+# vim-buffer-ring 💍
 
 A circular, most-recently-used buffer navigator.
 
