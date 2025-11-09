@@ -142,6 +142,27 @@ To load the plugin manually, install to
 `~/.vim/pack/landonb/opt` instead and call
 `:packadd vim-buffer-ring` when ready.
 
+## Related Projects
+
+- *Harpoon*
+
+  <https://github.com/ThePrimeagen/harpoon/tree/harpoon2>
+
+  (From the prolific YouTuber, [`ThePrimeagen`](https://www.youtube.com/@ThePrimeagen)
+  aka [`ThePrimeTime`](https://www.youtube.com/@ThePrimeTimeagen).)
+
+  - Details on Reddit:
+
+    <https://www.reddit.com/r/neovim/comments/16d9kg8/harpoon/>
+
+  - A video overview:
+
+    <https://www.youtube.com/watch?v=Qnos8aApa9g>
+
+- ``nvim-project-marks`` — *A minimal plugin for Neovim that stores file marks in a local ShaDa file.*
+
+  <https://github.com/BartSte/nvim-project-marks>
+
 ## License
 
 Copyright 2020-2025 Landon Bouma. All rights reserved. \
