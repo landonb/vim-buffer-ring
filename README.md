@@ -20,13 +20,12 @@ But with two tweaks:
   For instance, suppose the user opens the three files, 'foo', 'bar', and
   then 'baz', in that order. The history list has the following entries:
 
-
     ```
     [foo, bar, baz]
                ^^^
     ```
 
-   where 'baz' (as indicated) is the current index. 
+   where 'baz' (as indicated) is the current index.
 
    If the users edits 'foo' again, rather than creating a fourth
    entry in the list, e.g.,
@@ -43,14 +42,14 @@ But with two tweaks:
                ^^^
     ```
 
-   - The author prefers this behavior because they often use an `:edit #`
-     mapping to jump back and forth between the same two buffers, which
-     would otherwise end up creating a history like this:
+  - The author prefers this behavior because they often use an `:edit #`
+    mapping to jump back and forth between the same two buffers, which
+    would otherwise end up creating a history like this:
 
-      ```
-      [foo, bar, baz, foo, baz, foo, baz, foo, baz, foo]  # How vim-bufsurf works.
-                                                    ^^^
-      ```
+    ```
+    [foo, bar, baz, foo, baz, foo, baz, foo, baz, foo]  # How vim-bufsurf works.
+                                                  ^^^
+    ```
 
 which makes walking backwards (say, to the 'bar' buffer) take longer.
 
@@ -157,4 +156,3 @@ It also provides `<Plug>` mappings:
 nmap ]b <Plug>(buf-surf-forward)
 nmap [b <Plug>(buf-surf-back)
 ```
-
