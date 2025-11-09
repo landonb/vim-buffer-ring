@@ -58,26 +58,75 @@ which makes walking backwards (say, to the 'bar' buffer) take longer.
 
 ### Requirements
 
-This plug-in requires Vim v8.0 or greater, to take advantage of timers.
+This plug-in works on Neovim, or requires Vim v8.0 or greater, to take advantage of timers.
 
 ## Usage
 
-Call `:BufferRingReverse` to navigate to the previous buffer in the history:
+- Call `:BufferRingReverse` to navigate to the previous buffer in the history:
 
   ```
     :BufferRingReverse
   ```
 
-Call `:BufferRingForward` to navigate to the next buffer in the history:
+- Call `:BufferRingForward` to navigate to the next buffer in the history:
 
   ```
   :BufferRingForward
   ```
 
-You will probably want to wire this in your own Vim configuration
-to whatever keys you like best.
+Additional Commands:
 
-- The author has these two commands wired to `<Ctrl-j>` and `<Ctrl-k>`, e.g.,
+- Use `BufferRingList` to print the buffer history for the current window.
+
+  ```
+    :BufferRingList
+  ```
+
+- Use `BufferRingClear` to clear the buffer history for the current window.
+
+  ```
+    :BufferRingClear
+  ```
+
+### Neovim `lazy.nvim` config
+
+The author wires `<Ctrl-;>` and `<Ctrl-'>` to reverse and forward through
+the buffer-ring, and `<LocalLeader>dB` to show buffer-ring internals, e.g.:
+
+  ```
+    {
+      "landonb/vim-buffer-ring",
+      event = "VeryLazy",
+
+      config = function()
+        require("which-key").add({
+          icon = "🪐",
+          {
+            "<C-;>",
+            "<cmd>:BufferRingReverse<CR>",
+            desc = "Buffer Ring Reverse",
+            mode = { "n", "i" },
+          },
+          {
+            "<C-'>",
+            "<cmd>:BufferRingForward<CR>",
+            desc = "Buffer Ring Forward",
+            mode = { "n", "i" },
+          },
+          {
+            "<localleader>dB",
+            mode = { "n", "i" },
+            '<cmd>lua vim.api.nvim_call_function("g:embrace#bufsurf#BufferRingListAll", {})<CR>',
+            desc = "Inspect Buffer-Ring",
+          },
+        })
+      end,
+    },
+  ```
+
+### Vim config
+
+The author has these two commands wired to `<Ctrl-j>` and `<Ctrl-k>`, e.g.,
 
   ```
     noremap <C-j> :BufferRingReverse<CR>
@@ -91,18 +140,11 @@ to whatever keys you like best.
     inoremap <C-k> <C-O>:BufferRingForward<CR>
   ```
 
-Additional Commands:
+You could also use the `<Plug>` mappings, e.g:
 
-Use `BufferRingList` to print the buffer history for the current window.
-
-  ```
-    :BufferRingList
-  ```
-
-Use `BufferRingClear` to clear the buffer history for the current window.
-
-  ```
-    :BufferRingClear
+  ```vimL
+    nmap ]b <Plug>(buf-surf-forward)
+    nmap [b <Plug>(buf-surf-back)
   ```
 
 ## Options
@@ -129,7 +171,10 @@ The following options are available:
 
 ## Installation
 
-Take advantage of Vim's packages feature (`:h packages`), e.g.,:
+If you use Neovim and `lazy.nvim`, the example config above is all you need.
+
+If you're still running Vim, you could use Vim's packages feature
+(`:h packages`), e.g.,:
 
   ```shell
   mkdir -p ~/.vim/pack/landonb/start
@@ -137,10 +182,6 @@ Take advantage of Vim's packages feature (`:h packages`), e.g.,:
   git clone https://github.com/landonb/vim-buffer-ring.git
   vim -u NONE -c "helptags vim-buffer-ring/doc" -c q
   ```
-
-To load the plugin manually, install to
-`~/.vim/pack/landonb/opt` instead and call
-`:packadd vim-buffer-ring` when ready.
 
 ## Related Projects
 
@@ -170,10 +211,3 @@ Copyright 2010-2021 Ton van den Heuvel. All rights reserved.
 
 This work is licensed under the MIT License.
 View the [LICENSE](LICENSE) file for details.
-
-It also provides `<Plug>` mappings:
-
-```vimL
-nmap ]b <Plug>(buf-surf-forward)
-nmap [b <Plug>(buf-surf-back)
-```
