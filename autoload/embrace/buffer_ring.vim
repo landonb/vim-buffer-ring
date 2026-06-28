@@ -43,6 +43,8 @@ function! g:embrace#buffer_ring#IsNormalBuffer(bufnr) abort
         return 0
     endif
 
+    " Note we ignore l:ftype == 'help', which user might
+    " be editing.
     let l:ftype = getbufvar(l:bufnr, "&filetype")
 
     let l:bufname = bufname(l:bufnr)
